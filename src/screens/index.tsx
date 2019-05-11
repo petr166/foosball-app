@@ -1,5 +1,5 @@
-import React from 'react';
-import { Navigation } from 'react-native-navigation';
+import React, { FunctionComponent } from 'react';
+import { Navigation, Options } from 'react-native-navigation';
 import { ComponentType } from 'react';
 import { ApolloClient } from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo-hooks';
@@ -12,6 +12,11 @@ import { Login } from './Login';
 import { Tournaments } from './Tournaments';
 import { Notifications } from './Notifications';
 import { Profile } from './Profile';
+import { MyProfile } from './MyProfile';
+
+export interface IScreenComponent extends FunctionComponent {
+  options?: Options;
+}
 
 const registerScreen = (
   name: string,
@@ -36,4 +41,5 @@ export const registerAppScreens = (apolloClient: ApolloClient<any>) => {
   registerScreen(screenNames.TOURNAMENTS, Tournaments, apolloClient);
   registerScreen(screenNames.NOTIFICATIONS, Notifications, apolloClient);
   registerScreen(screenNames.PROFILE, Profile, apolloClient);
+  registerScreen(screenNames.MY_PROFILE, MyProfile, apolloClient);
 };

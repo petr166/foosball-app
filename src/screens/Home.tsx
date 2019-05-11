@@ -1,27 +1,20 @@
-import React, { FunctionComponent, useEffect } from 'react';
+import React from 'react';
 
-import { ScreenContainer, TextX, ButtonX } from '../components';
-import { logout } from '../login';
-import { IGlobalState } from '../global';
-import { useGlobal } from 'reactn';
+import { ScreenContainer, TextX } from '../components';
+import { IScreenComponent } from '.';
 
-export const Home: FunctionComponent = () => {
-  const [currentUser] = useGlobal<IGlobalState>('currentUser');
-  const { name, email } = currentUser;
-
+export const Home: IScreenComponent = () => {
   return (
     <ScreenContainer>
-      <TextX>Home</TextX>
-
-      <TextX>{name}</TextX>
-      <TextX>{email}</TextX>
-
-      <ButtonX
-        title="Logout"
-        onPress={() => {
-          logout();
-        }}
-      />
+      <TextX>Feed</TextX>
     </ScreenContainer>
   );
+};
+
+Home.options = {
+  topBar: {
+    title: {
+      text: 'Feed',
+    },
+  },
 };

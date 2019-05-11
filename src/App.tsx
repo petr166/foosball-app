@@ -8,7 +8,7 @@ import {
   LOGIN,
   TOURNAMENTS,
   NOTIFICATIONS,
-  PROFILE,
+  MY_PROFILE,
 } from './screens';
 import { initApolloClient } from './apollo';
 import { initGlobal, ROOT, IGlobalState } from './global';
@@ -31,7 +31,7 @@ let appIcons: any[];
 const getAppIcons = async () => {
   if (!appIcons) {
     appIcons = await Promise.all([
-      getImg('road'),
+      getImg('stream'),
       getImg('trophy'),
       getImg('bell'),
       getImg('user-alt'),
@@ -95,7 +95,7 @@ const startApp = async (root: ROOT) => {
                   ],
                   options: {
                     bottomTab: {
-                      text: 'Home',
+                      text: 'Feed',
                       icon: homeIcon,
                     },
                   },
@@ -140,13 +140,13 @@ const startApp = async (root: ROOT) => {
                   children: [
                     {
                       component: {
-                        name: PROFILE,
+                        name: MY_PROFILE,
                       },
                     },
                   ],
                   options: {
                     bottomTab: {
-                      text: 'Profile',
+                      text: 'You',
                       icon: profileIcon,
                     },
                   },
