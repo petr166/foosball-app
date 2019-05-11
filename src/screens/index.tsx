@@ -9,6 +9,9 @@ export * from './screenNames'; // to get them from /screens
 import { Register } from './Register';
 import { Home } from './Home';
 import { Login } from './Login';
+import { Tournaments } from './Tournaments';
+import { Notifications } from './Notifications';
+import { Profile } from './Profile';
 
 const registerScreen = (
   name: string,
@@ -30,4 +33,7 @@ export const registerAppScreens = (apolloClient: ApolloClient<any>) => {
   registerScreen(screenNames.REGISTER, Register, apolloClient);
   registerScreen(screenNames.HOME, Home, apolloClient);
   registerScreen(screenNames.LOGIN, Login, apolloClient);
+  registerScreen(screenNames.TOURNAMENTS, Tournaments, apolloClient);
+  registerScreen(screenNames.NOTIFICATIONS, Notifications, apolloClient);
+  registerScreen(screenNames.PROFILE, Profile, apolloClient);
 };

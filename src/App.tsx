@@ -1,6 +1,15 @@
 import { Navigation } from 'react-native-navigation';
+import Icon, { FA5Style } from 'react-native-vector-icons/FontAwesome5';
 
-import { registerAppScreens, REGISTER, HOME, LOGIN } from './screens';
+import {
+  registerAppScreens,
+  REGISTER,
+  HOME,
+  LOGIN,
+  TOURNAMENTS,
+  NOTIFICATIONS,
+  PROFILE,
+} from './screens';
 import { initApolloClient } from './apollo';
 import { initGlobal, ROOT, IGlobalState } from './global';
 import { addCallback } from 'reactn';
@@ -16,9 +25,32 @@ const handleRootChange = (globalState: IGlobalState) => {
   return null;
 };
 
-const startApp = (root: ROOT) => {
+const getImg = (name: string) =>
+  Icon.getImageSource(name, 25, undefined, FA5Style.solid);
+let appIcons: any[];
+const getAppIcons = async () => {
+  if (!appIcons) {
+    appIcons = await Promise.all([
+      getImg('road'),
+      getImg('trophy'),
+      getImg('bell'),
+      getImg('user-alt'),
+    ]);
+  }
+
+  return appIcons;
+};
+
+const startApp = async (root: ROOT) => {
   console.log('START APP:', root);
   oldRoot = root;
+
+  Navigation.setDefaultOptions({
+    bottomTabs: {
+      animate: false,
+      titleDisplayMode: 'alwaysShow',
+    },
+  });
 
   switch (root) {
     case ROOT.REGISTER:
@@ -41,10 +73,86 @@ const startApp = (root: ROOT) => {
       });
       break;
     case ROOT.HOME:
+      const [
+        homeIcon,
+        tournamentsIcon,
+        notificationsIcon,
+        profileIcon,
+      ] = await getAppIcons();
+
       Navigation.setRoot({
         root: {
-          component: {
-            name: HOME,
+          bottomTabs: {
+            children: [
+              {
+                stack: {
+                  children: [
+                    {
+                      component: {
+                        name: HOME,
+                      },
+                    },
+                  ],
+                  options: {
+                    bottomTab: {
+                      text: 'Home',
+                      icon: homeIcon,
+                    },
+                  },
+                },
+              },
+              {
+                stack: {
+                  children: [
+                    {
+                      component: {
+                        name: TOURNAMENTS,
+                      },
+                    },
+                  ],
+                  options: {
+                    bottomTab: {
+                      text: 'Tournaments',
+                      icon: tournamentsIcon,
+                    },
+                  },
+                },
+              },
+              {
+                stack: {
+                  children: [
+                    {
+                      component: {
+                        name: NOTIFICATIONS,
+                      },
+                    },
+                  ],
+                  options: {
+                    bottomTab: {
+                      text: 'Notifications',
+                      icon: notificationsIcon,
+                    },
+                  },
+                },
+              },
+              {
+                stack: {
+                  children: [
+                    {
+                      component: {
+                        name: PROFILE,
+                      },
+                    },
+                  ],
+                  options: {
+                    bottomTab: {
+                      text: 'Profile',
+                      icon: profileIcon,
+                    },
+                  },
+                },
+              },
+            ],
           },
         },
       });
