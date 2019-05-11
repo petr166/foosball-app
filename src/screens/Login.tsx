@@ -68,7 +68,6 @@ export const Login: FunctionComponent = () => {
               },
             })
               .then(({ data: { login: { token, user } } }) => {
-                setLoading(false);
                 login({ token, user });
               })
               .catch(err => {

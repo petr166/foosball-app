@@ -83,7 +83,6 @@ export const Register: FunctionComponent = () => {
               },
             })
               .then(({ data: { register: { token, user } } }) => {
-                setLoading(false);
                 login({ token, user });
               })
               .catch(err => {

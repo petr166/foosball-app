@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { parseError, ExtendedError } from '../utils';
 
@@ -20,6 +20,13 @@ export const useLoading = (
   const [error, setError] = useState<ExtendedError | null>(null);
 
   let loadingTimeout: number;
+
+  // clear timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (loadingTimeout) clearTimeout(loadingTimeout);
+    };
+  }, []);
 
   const waitSetLoading = (
     val: boolean,
