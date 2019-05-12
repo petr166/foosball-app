@@ -3,6 +3,7 @@ package com.foosballapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.RNFetchBlob.RNFetchBlobPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.facebook.react.ReactNativeHost;
@@ -41,7 +42,8 @@ public class MainApplication extends NavigationApplication {
         return Arrays.<ReactPackage>asList(
             // eg. new VectorIconsPackage()
                 new AsyncStoragePackage(),
-                new VectorIconsPackage()
+                new VectorIconsPackage(),
+                new RNFetchBlobPackage()
         );
     }
   

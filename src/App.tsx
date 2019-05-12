@@ -49,6 +49,7 @@ const startApp = async (root: ROOT) => {
     bottomTabs: {
       animate: false,
       titleDisplayMode: 'alwaysShow',
+      currentTabIndex: 3, // TODO: dev remove
     },
   });
 
