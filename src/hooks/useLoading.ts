@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react';
+import { v1 as uuid } from 'uuid';
 
 import { parseError, ExtendedError } from '../utils';
+
+const timeoutRefs: any = {};
+
+const superClearTimeout = (id: string) => {
+  if (timeoutRefs[id]) {
+    clearTimeout(timeoutRefs[id]);
+    delete timeoutRefs[id];
+  }
+};
 
 export const useLoading = (
   defaultVal: boolean = false
@@ -17,14 +27,13 @@ export const useLoading = (
 ] => {
   const [showSpinner, setShowSpinner] = useState(defaultVal);
   const [disableActions, setDisableActions] = useState(defaultVal);
+  const [id] = useState(uuid());
   const [error, setError] = useState<ExtendedError | null>(null);
-
-  let loadingTimeout: number;
 
   // clear timeout on unmount
   useEffect(() => {
     return () => {
-      if (loadingTimeout) clearTimeout(loadingTimeout);
+      if (timeoutRefs[id]) superClearTimeout(id);
     };
   }, []);
 
@@ -35,12 +44,12 @@ export const useLoading = (
   ) => {
     const { timeout = 300 } = options;
 
-    if (loadingTimeout) clearTimeout(loadingTimeout);
+    if (timeoutRefs[id]) superClearTimeout(id);
     setDisableActions(val);
     setError(error ? parseError(error) : null);
 
     if (val) {
-      loadingTimeout = setTimeout(() => {
+      timeoutRefs[id] = window.setTimeout(() => {
         setShowSpinner(val);
       }, timeout);
     } else {

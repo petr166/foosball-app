@@ -13,6 +13,7 @@
     "@react-native-community/async-storage": "^1.4.0",
     "@types/lodash": "^4.14.126",
     "@types/react-native-vector-icons": "^6.4.0",
+    "@types/uuid": "^3.4.4",
     "apollo-boost": "^0.3.1",
     "apollo-link-context": "^1.0.17",
     "graphql": "^14.3.0",
@@ -28,7 +29,8 @@
     "react-native-vector-icons": "^6.4.2",
     "reactn": "^2.0.0",
     "redux": "^4.0.1",
-    "rn-fetch-blob": "^0.10.15"
+    "rn-fetch-blob": "^0.10.15",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@babel/core": "7.4.4",
