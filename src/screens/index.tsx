@@ -14,8 +14,11 @@ import { Notifications } from './Notifications';
 import { Profile } from './Profile';
 import { MyProfile } from './MyProfile';
 
-export interface IScreenComponent extends FunctionComponent {
-  options?: Options;
+export interface IScreenComponent<P> extends FunctionComponent<P> {
+  options?: Options | ((props?: any) => Options);
+}
+export interface ScreenComponentProps {
+  componentId: number;
 }
 
 const registerScreen = (

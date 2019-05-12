@@ -13,6 +13,7 @@ import {
 import { initApolloClient } from './apollo';
 import { initGlobal, ROOT, IGlobalState } from './global';
 import { addCallback } from 'reactn';
+import { BOTTOM_TAB_ICON_SIZE } from './config/styles';
 
 let oldRoot: ROOT;
 const handleRootChange = (globalState: IGlobalState) => {
@@ -26,7 +27,7 @@ const handleRootChange = (globalState: IGlobalState) => {
 };
 
 const getImg = (name: string) =>
-  Icon.getImageSource(name, 25, undefined, FA5Style.solid);
+  Icon.getImageSource(name, BOTTOM_TAB_ICON_SIZE, undefined, FA5Style.solid);
 let appIcons: any[];
 const getAppIcons = async () => {
   if (!appIcons) {
