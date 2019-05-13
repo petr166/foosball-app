@@ -15,7 +15,6 @@
     "@types/react-native-vector-icons": "^6.4.0",
     "@types/uuid": "^3.4.4",
     "apollo-boost": "^0.3.1",
-    "apollo-link-context": "^1.0.17",
     "graphql": "^14.3.0",
     "lodash": "^4.17.11",
     "react": "16.8.3",
