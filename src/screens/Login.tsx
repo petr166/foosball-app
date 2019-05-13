@@ -8,11 +8,11 @@ import { useGlobal } from 'reactn';
 import { ScreenContainer, TextX, InputX, ButtonX } from '../components';
 import { useLoading } from '../hooks';
 import { login } from '../login';
-import { UserFragment } from '../fragments';
+import { UserFragments } from '../fragments';
 import { IGlobalState, ROOT } from '../global';
 
 const LOGIN = gql`
-  ${UserFragment}
+  ${UserFragments}
 
   mutation Login($input: LoginInput!) {
     login(input: $input) {
