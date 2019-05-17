@@ -14,3 +14,15 @@ export const getNavBarHeight = () => {
 
   return 56; // android portrait navbar height;
 };
+
+export const getBoxShadowStyles = (options: any = {}) => ({
+  elevation: 1,
+  shadowColor: '#000',
+  shadowOffset: {
+    width: 1,
+    height: 1,
+  },
+  shadowRadius: 2,
+  shadowOpacity: 0.3,
+  ...options,
+});
