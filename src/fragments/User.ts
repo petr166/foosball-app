@@ -8,6 +8,12 @@ export const UserFragment = gql`
   }
 `;
 
+export interface IUser {
+  id: string;
+  name: string;
+  avatar: string | null;
+}
+
 export const UserProfileFragment = gql`
   fragment UserProfileFragment on User {
     ...UserFragment
@@ -17,3 +23,8 @@ export const UserProfileFragment = gql`
 
   ${UserFragment}
 `;
+
+export interface IUserProfile extends IUser {
+  winStats: [number, number];
+  trophyCount: number;
+}

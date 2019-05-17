@@ -1,12 +1,13 @@
 import React, { FunctionComponent } from 'react';
 import {
   View,
-  ViewProps,
   StyleSheet,
   SafeAreaView,
   FlatList,
   Dimensions,
   Platform,
+  ActivityIndicator,
+  ViewProps,
 } from 'react-native';
 import { ProgressCircle } from 'react-native-svg-charts';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -15,20 +16,34 @@ import { Avatar } from './Avatar';
 import { TextX } from './TextX';
 import { getNavBarHeight } from '../utils';
 import { colors } from '../config/styles';
+import { DocConnection } from '../interfaces';
+import { Game } from './Game';
+import { IGame, IUserProfile } from '../fragments';
 
 const SCREEN_MARGIN = 16;
 
+export interface IUserProfileWithGames extends IUserProfile {
+  games: DocConnection<IGame>;
+}
+
 export interface ProfileViewProps extends ViewProps {
-  user: {
-    name: string;
-    avatar: string | null;
-    winStats: number[];
-    trophyCount: number;
-  };
+  user: IUserProfileWithGames;
   isCurrentUser?: boolean;
+  onEndReached?: () => void;
+  onMomentumScrollBegin?: () => void;
+  isLoading?: boolean;
 }
 export const ProfileView: FunctionComponent<ProfileViewProps> = ({
-  user: { avatar, name, winStats, trophyCount },
+  user: {
+    avatar,
+    name,
+    winStats,
+    trophyCount,
+    games: { edges: gameList = [] },
+  },
+  onEndReached,
+  onMomentumScrollBegin,
+  isLoading,
 }) => {
   let circleSize =
     (Dimensions.get('window').width - SCREEN_MARGIN * 3) / 2 - 18;
@@ -119,10 +134,28 @@ export const ProfileView: FunctionComponent<ProfileViewProps> = ({
               </TextX>
             </View>
           </View>
+
+          {gameList.length && (
+            <View style={styles.gamesHeader}>
+              <TextX style={{ fontSize: 18 }}>LAST GAMES</TextX>
+            </View>
+          )}
         </View>
       }
-      data={[]}
-      renderItem={() => null}
+      ListFooterComponent={
+        isLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator />
+          </View>
+        ) : (
+          undefined
+        )
+      }
+      data={gameList.map(v => v.node)}
+      renderItem={({ item }) => <Game game={item} />}
+      keyExtractor={item => item.id}
+      onMomentumScrollBegin={onMomentumScrollBegin}
+      onEndReached={onEndReached}
     />
   );
 };
@@ -133,6 +166,12 @@ const styles = StyleSheet.create({
   },
   listHeader: {
     alignItems: 'center',
+  },
+  gamesHeader: {
+    alignSelf: 'flex-start',
+    marginHorizontal: SCREEN_MARGIN,
+    marginTop: 34,
+    marginBottom: 20,
   },
   avatar: {
     marginTop: 55,
@@ -167,6 +206,10 @@ const styles = StyleSheet.create({
   statsIconContainer: {
     marginBottom: 14,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingContainer: {
+    marginVertical: 30,
     alignItems: 'center',
   },
 });

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGlobal } from 'reactn';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Options } from 'react-native-navigation';
@@ -11,7 +11,8 @@ import { IGlobalState } from '../global';
 import { ImageURISource } from 'react-native';
 import { useNavBtnPress } from '../hooks';
 import { TOP_BAR_ICON_SIZE } from '../config/styles';
-import { UserProfileFragment } from '../fragments';
+import { UserProfileFragment, GameFragment } from '../fragments';
+import { mergeWith, isArray } from 'lodash';
 
 const SETTINGS_ID = 'MyProfile.settings';
 
@@ -21,20 +22,34 @@ Icon.getImageSource('cog', TOP_BAR_ICON_SIZE).then(src => {
 });
 
 const GET_USER = gql`
-  query GetUser($id: ID!) {
+  query GetUser($id: ID!, $cursor: Int!) {
     user(id: $id) {
       ...UserProfileFragment
+      games(first: 2, cursor: $cursor) {
+        edges {
+          node {
+            ...GameFragment
+          }
+          cursor
+        }
+        pageInfo {
+          hasNextPage
+        }
+      }
     }
   }
 
   ${UserProfileFragment}
+  ${GameFragment}
 `;
 
 export interface MyProfileProps extends ScreenComponentProps {}
 export const MyProfile: IScreenComponent<MyProfileProps> = () => {
   const [currentUser, setCurrentUser] = useGlobal<IGlobalState>('currentUser');
-  const { data, error, loading } = useQuery(GET_USER, {
-    variables: { id: currentUser.id },
+  const [shouldLoadMore, setShouldLoadMore] = useState(false);
+  const { data, error, loading, fetchMore } = useQuery(GET_USER, {
+    variables: { id: currentUser.id, cursor: 0 },
+    notifyOnNetworkStatusChange: true,
   });
 
   useNavBtnPress(() => {
@@ -50,7 +65,46 @@ export const MyProfile: IScreenComponent<MyProfileProps> = () => {
     }
   }, [data]);
 
-  return <ProfileView user={currentUser} isCurrentUser />;
+  return (
+    <ProfileView
+      user={currentUser}
+      isCurrentUser
+      onMomentumScrollBegin={() => {
+        if (!shouldLoadMore) setShouldLoadMore(true);
+      }}
+      onEndReached={() => {
+        if (
+          !loading &&
+          data.user.games.pageInfo.hasNextPage &&
+          shouldLoadMore
+        ) {
+          fetchMore({
+            variables: {
+              cursor: currentUser.games.edges.length,
+            },
+            updateQuery: (prev, { fetchMoreResult }) => {
+              let newData = { ...prev };
+              mergeWith(newData, fetchMoreResult, (objValue, srcValue) => {
+                if (isArray(objValue)) {
+                  return objValue.concat(srcValue);
+                }
+              });
+
+              const { user } = newData;
+              if (user) {
+                setCurrentUser({ ...currentUser, ...user });
+              }
+
+              return newData;
+            },
+          });
+
+          if (shouldLoadMore) setShouldLoadMore(false);
+        }
+      }}
+      isLoading={loading}
+    />
+  );
 };
 
 MyProfile.options = (): Options => ({
