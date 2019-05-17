@@ -47,7 +47,6 @@ export const Avatar: FunctionComponent<AvatarProps> = ({
         isDefaultImg={!avatar}
         defaultImageProps={{
           source: defaultProfileImg,
-          defaultSource: defaultProfileImg,
           style: getRoundStyles(defaultImgSize),
           resizeMode: 'contain',
         }}

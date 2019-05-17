@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-native-community/async-storage": "^1.4.0",
     "@types/lodash": "^4.14.126",
+    "@types/react-native-svg-charts": "^5.0.1",
     "@types/react-native-vector-icons": "^6.4.0",
     "@types/uuid": "^3.4.4",
     "apollo-boost": "^0.3.1",
@@ -25,6 +26,8 @@
     "react-native-img-cache": "^1.6.0",
     "react-native-keyboard-aware-scroll-view": "^0.8.0",
     "react-native-navigation": "^2.18.5",
+    "react-native-svg": "^9.4.0",
+    "react-native-svg-charts": "^5.2.0",
     "react-native-vector-icons": "^6.4.2",
     "reactn": "^2.0.0",
     "redux": "^4.0.1",

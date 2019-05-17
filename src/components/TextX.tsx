@@ -18,7 +18,9 @@ export const TextX: FunctionComponent<Props> = ({
 };
 
 const styles = StyleSheet.create({
-  text: {},
+  text: {
+    color: '#000',
+  },
   shadowed: {
     textShadowOffset: { width: 1, height: 1 },
     textShadowColor: 'rgba(0,0,0,.3)',

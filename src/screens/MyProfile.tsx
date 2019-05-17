@@ -5,10 +5,9 @@ import { Options } from 'react-native-navigation';
 import { gql } from 'apollo-boost';
 import { useQuery } from 'react-apollo-hooks';
 
-import { ScreenContainer, ButtonX, ProfileView } from '../components';
+import { ProfileView } from '../components';
 import { IScreenComponent, ScreenComponentProps } from './index';
 import { IGlobalState } from '../global';
-import { logout } from '../login';
 import { ImageURISource } from 'react-native';
 import { useNavBtnPress } from '../hooks';
 import { TOP_BAR_ICON_SIZE } from '../config/styles';
@@ -51,24 +50,14 @@ export const MyProfile: IScreenComponent<MyProfileProps> = () => {
     }
   }, [data]);
 
-  return (
-    <ScreenContainer>
-      <ProfileView user={currentUser} isCurrentUser />
-
-      <ButtonX
-        title="Logout"
-        onPress={() => {
-          logout();
-        }}
-      />
-    </ScreenContainer>
-  );
+  return <ProfileView user={currentUser} isCurrentUser />;
 };
 
 MyProfile.options = (): Options => ({
   // @ts-ignore 2322
   topBar: {
     drawBehind: true,
+    elevation: 0,
     background: {
       color: 'transparent',
       translucent: true,

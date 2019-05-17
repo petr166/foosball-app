@@ -3,6 +3,7 @@ package com.foosballapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.horcrux.svg.SvgPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
@@ -43,7 +44,8 @@ public class MainApplication extends NavigationApplication {
             // eg. new VectorIconsPackage()
                 new AsyncStoragePackage(),
                 new VectorIconsPackage(),
-                new RNFetchBlobPackage()
+                new RNFetchBlobPackage(),
+                new SvgPackage()
         );
     }
   
