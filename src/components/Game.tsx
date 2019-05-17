@@ -30,7 +30,7 @@ export const Game: FunctionComponent<GameProps> = ({
 
       <View style={styles.content}>
         <Team team={team1} />
-        <TextX style={{ fontSize: 42, fontWeight: '900' }}>
+        <TextX style={styles.scoreText}>
           {score1} - {score2}
         </TextX>
         <Team team={team2} />
@@ -74,8 +74,13 @@ const styles = StyleSheet.create({
   },
   content: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     alignItems: 'center',
+  },
+  scoreText: {
+    fontSize: 42,
+    fontWeight: '900',
+    marginHorizontal: 12,
   },
   teamContainer: {
     justifyContent: 'center',
