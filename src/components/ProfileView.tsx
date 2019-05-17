@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Avatar } from './Avatar';
 import { TextX } from './TextX';
 import { getNavBarHeight } from '../utils';
+import { colors } from '../config/styles';
 
 const SCREEN_MARGIN = 16;
 
@@ -64,7 +65,7 @@ export const ProfileView: FunctionComponent<ProfileViewProps> = ({
                   style={{ height: circleSize, width: circleSize }}
                   progress={progress}
                   strokeWidth={26}
-                  progressColor="#000"
+                  progressColor={colors.primary}
                   animate
                 />
 
@@ -92,7 +93,7 @@ export const ProfileView: FunctionComponent<ProfileViewProps> = ({
                   },
                 ]}
               >
-                <Icon name="award" size={circleSize} color="#000" />
+                <Icon name="award" size={circleSize} color={colors.gold} />
 
                 <View
                   style={[

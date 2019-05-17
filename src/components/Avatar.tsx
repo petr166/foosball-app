@@ -8,9 +8,10 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { ImageX } from './ImageX';
+import { colors } from '../config/styles';
 
 let defaultProfileImg: ImageURISource;
-Icon.getImageSource('user-alt', 160).then(src => {
+Icon.getImageSource('user-alt', 160, colors.secondary).then(src => {
   defaultProfileImg = src;
 });
 
@@ -57,7 +58,7 @@ export const Avatar: FunctionComponent<AvatarProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    borderColor: '#000',
+    borderColor: colors.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },

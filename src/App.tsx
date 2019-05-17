@@ -13,7 +13,7 @@ import {
 import { initApolloClient } from './apollo';
 import { initGlobal, ROOT, IGlobalState } from './global';
 import { addCallback } from 'reactn';
-import { BOTTOM_TAB_ICON_SIZE } from './config/styles';
+import { BOTTOM_TAB_ICON_SIZE, colors } from './config/styles';
 
 let oldRoot: ROOT;
 const handleRootChange = (globalState: IGlobalState) => {
@@ -48,9 +48,12 @@ const startApp = async (root: ROOT) => {
 
   Navigation.setDefaultOptions({
     bottomTabs: {
-      animate: false,
+      animate: true,
       titleDisplayMode: 'alwaysShow',
       currentTabIndex: 3, // TODO: dev remove
+    },
+    bottomTab: {
+      selectedIconColor: colors.primary,
     },
   });
 
