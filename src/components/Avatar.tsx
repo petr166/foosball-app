@@ -28,14 +28,17 @@ export const Avatar: FunctionComponent<AvatarProps> = ({
   avatar,
   size = 30,
   onPress,
+  style,
+  ...props
 }) => {
   const defaultImgSize = (size * 60) / 100;
   const borderWidth = (size * 3) / 100;
 
   return (
     <TouchableOpacity
-      style={[styles.button, getRoundStyles(size), { borderWidth }]}
+      style={[styles.button, getRoundStyles(size), { borderWidth }, style]}
       disabled={!onPress}
+      {...props}
     >
       <ImageX
         source={avatar ? { uri: avatar } : defaultProfileImg}
