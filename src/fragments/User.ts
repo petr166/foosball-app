@@ -12,6 +12,7 @@ export const UserProfileFragment = gql`
   fragment UserProfileFragment on User {
     ...UserFragment
     winStats
+    trophyCount
   }
 
   ${UserFragment}

@@ -22,11 +22,12 @@ export interface ProfileViewProps extends ViewProps {
     name: string;
     avatar: string | null;
     winStats: number[];
+    trophyCount: number;
   };
   isCurrentUser?: boolean;
 }
 export const ProfileView: FunctionComponent<ProfileViewProps> = ({
-  user: { avatar, name, winStats },
+  user: { avatar, name, winStats, trophyCount },
 }) => {
   let circleSize =
     (Dimensions.get('window').width - SCREEN_MARGIN * 3) / 2 - 18;
@@ -98,12 +99,14 @@ export const ProfileView: FunctionComponent<ProfileViewProps> = ({
                     styles.winsContainer,
                     {
                       justifyContent: 'flex-start',
-                      paddingTop: winsFontSize / 1.6,
+                      paddingTop: winsFontSize / 1.4,
                     },
                   ]}
                 >
-                  <TextX style={[styles.winsText, { fontSize: winsFontSize }]}>
-                    {winStats && winStats[0]}
+                  <TextX
+                    style={[styles.winsText, { fontSize: winsFontSize - 10 }]}
+                  >
+                    {trophyCount}
                   </TextX>
                 </View>
               </View>
@@ -111,7 +114,7 @@ export const ProfileView: FunctionComponent<ProfileViewProps> = ({
               <TextX
                 style={[styles.statsLabel, { fontSize: winsFontSize / 2 }]}
               >
-                TOURNAMENTS
+                TROPHIES
               </TextX>
             </View>
           </View>
