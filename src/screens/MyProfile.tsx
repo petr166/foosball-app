@@ -12,7 +12,7 @@ import { logout } from '../login';
 import { ImageURISource } from 'react-native';
 import { useNavBtnPress } from '../hooks';
 import { TOP_BAR_ICON_SIZE } from '../config/styles';
-import { UserFragments } from '../fragments';
+import { UserProfileFragment } from '../fragments';
 
 const SETTINGS_ID = 'MyProfile.settings';
 
@@ -22,13 +22,13 @@ Icon.getImageSource('cog', TOP_BAR_ICON_SIZE).then(src => {
 });
 
 const GET_USER = gql`
-  ${UserFragments}
-
   query GetUser($id: ID!) {
     user(id: $id) {
       ...UserProfileFragment
     }
   }
+
+  ${UserProfileFragment}
 `;
 
 export interface MyProfileProps extends ScreenComponentProps {}

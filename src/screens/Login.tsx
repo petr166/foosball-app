@@ -8,12 +8,10 @@ import { useGlobal } from 'reactn';
 import { ScreenContainer, TextX, InputX, ButtonX } from '../components';
 import { useLoading } from '../hooks';
 import { login } from '../login';
-import { UserFragments } from '../fragments';
+import { UserFragment } from '../fragments';
 import { IGlobalState, ROOT } from '../global';
 
 const LOGIN = gql`
-  ${UserFragments}
-
   mutation Login($input: LoginInput!) {
     login(input: $input) {
       user {
@@ -22,6 +20,8 @@ const LOGIN = gql`
       token
     }
   }
+
+  ${UserFragment}
 `;
 
 export const Login: FunctionComponent = () => {
