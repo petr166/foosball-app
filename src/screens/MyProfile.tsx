@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useGlobal } from 'reactn';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Options } from 'react-native-navigation';
@@ -15,6 +15,7 @@ import { UserProfileFragment, GameFragment } from '../fragments';
 import { mergeWith, isArray } from 'lodash';
 
 const SETTINGS_ID = 'MyProfile.settings';
+const initialCursor = 0;
 
 let settingsIcon: ImageURISource;
 Icon.getImageSource('cog', TOP_BAR_ICON_SIZE).then(src => {
@@ -25,7 +26,7 @@ const GET_USER = gql`
   query GetUser($id: ID!, $cursor: Int!) {
     user(id: $id) {
       ...UserProfileFragment
-      games(first: 2, cursor: $cursor) {
+      games(first: 3, cursor: $cursor) {
         edges {
           node {
             ...GameFragment
@@ -46,11 +47,12 @@ const GET_USER = gql`
 export interface MyProfileProps extends ScreenComponentProps {}
 export const MyProfile: IScreenComponent<MyProfileProps> = () => {
   const [currentUser, setCurrentUser] = useGlobal<IGlobalState>('currentUser');
-  const [shouldLoadMore, setShouldLoadMore] = useState(false);
-  const { data, error, loading, fetchMore } = useQuery(GET_USER, {
-    variables: { id: currentUser.id, cursor: 0 },
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { data, error, loading, fetchMore, refetch } = useQuery(GET_USER, {
+    variables: { id: currentUser.id, cursor: initialCursor },
     notifyOnNetworkStatusChange: true,
   });
+  const shouldLoadMore = useRef(false);
 
   useNavBtnPress(() => {
     console.log('====================================');
@@ -59,24 +61,31 @@ export const MyProfile: IScreenComponent<MyProfileProps> = () => {
   }, SETTINGS_ID);
 
   useEffect(() => {
+    updateUser(data);
+  }, [data]);
+
+  const updateUser = (data: any) => {
     const { user } = data;
     if (user) {
       setCurrentUser({ ...currentUser, ...user });
     }
-  }, [data]);
+  };
 
   return (
     <ProfileView
       user={currentUser}
       isCurrentUser
-      onMomentumScrollBegin={() => {
-        if (!shouldLoadMore) setShouldLoadMore(true);
+      onScrollBeginDrag={() => {
+        if (!shouldLoadMore.current && !isRefreshing) {
+          shouldLoadMore.current = true;
+        }
       }}
       onEndReached={() => {
         if (
-          !loading &&
+          shouldLoadMore.current &&
           data.user.games.pageInfo.hasNextPage &&
-          shouldLoadMore
+          !loading &&
+          !isRefreshing
         ) {
           fetchMore({
             variables: {
@@ -90,19 +99,25 @@ export const MyProfile: IScreenComponent<MyProfileProps> = () => {
                 }
               });
 
-              const { user } = newData;
-              if (user) {
-                setCurrentUser({ ...currentUser, ...user });
-              }
-
+              updateUser(newData);
               return newData;
             },
           });
 
-          if (shouldLoadMore) setShouldLoadMore(false);
+          if (shouldLoadMore.current) shouldLoadMore.current = false;
         }
       }}
       isLoading={loading}
+      isRefreshing={isRefreshing}
+      onRefresh={() => {
+        setIsRefreshing(true);
+        refetch({ id: currentUser.id, cursor: initialCursor })
+          .then(updateUser)
+          .finally(() => {
+            setIsRefreshing(false);
+          });
+        if (shouldLoadMore.current) shouldLoadMore.current = false;
+      }}
     />
   );
 };

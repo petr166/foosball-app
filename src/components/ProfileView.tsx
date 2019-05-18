@@ -30,8 +30,10 @@ export interface ProfileViewProps extends ViewProps {
   user: IUserProfileWithGames;
   isCurrentUser?: boolean;
   onEndReached?: () => void;
-  onMomentumScrollBegin?: () => void;
+  onScrollBeginDrag?: () => void;
+  onRefresh?: () => void;
   isLoading?: boolean;
+  isRefreshing?: boolean;
 }
 export const ProfileView: FunctionComponent<ProfileViewProps> = ({
   user: {
@@ -39,11 +41,13 @@ export const ProfileView: FunctionComponent<ProfileViewProps> = ({
     name,
     winStats,
     trophyCount,
-    games: { edges: gameList = [] },
+    games: { edges: gameList = [] } = { edges: [] },
   },
   onEndReached,
-  onMomentumScrollBegin,
+  onScrollBeginDrag,
+  onRefresh,
   isLoading,
+  isRefreshing,
 }) => {
   let circleSize =
     (Dimensions.get('window').width - SCREEN_MARGIN * 3) / 2 - 18;
@@ -135,7 +139,7 @@ export const ProfileView: FunctionComponent<ProfileViewProps> = ({
             </View>
           </View>
 
-          {gameList.length && (
+          {!!gameList.length && (
             <View style={styles.gamesHeader}>
               <TextX style={{ fontSize: 18 }}>LAST GAMES</TextX>
             </View>
@@ -154,8 +158,11 @@ export const ProfileView: FunctionComponent<ProfileViewProps> = ({
       data={gameList.map(v => v.node)}
       renderItem={({ item }) => <Game game={item} />}
       keyExtractor={item => item.id}
-      onMomentumScrollBegin={onMomentumScrollBegin}
+      onScrollBeginDrag={onScrollBeginDrag}
       onEndReached={onEndReached}
+      onEndReachedThreshold={0.3}
+      onRefresh={onRefresh}
+      refreshing={isRefreshing}
     />
   );
 };
