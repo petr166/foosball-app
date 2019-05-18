@@ -1,10 +1,10 @@
 import React, { FunctionComponent } from 'react';
 import { Text, TextProps, StyleSheet } from 'react-native';
 
-interface Props extends TextProps {
+export interface TextXProps extends TextProps {
   shadowed?: boolean;
 }
-export const TextX: FunctionComponent<Props> = ({
+export const TextX: FunctionComponent<TextXProps> = ({
   style,
   shadowed = true,
   ...props

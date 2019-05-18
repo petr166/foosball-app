@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState, useRef } from 'react';
+import React, { FunctionComponent, useState, useRef, useEffect } from 'react';
 import {
   StyleSheet,
   ViewProps,
@@ -43,8 +43,14 @@ const maxPlayersOptions = [
 
 const defaultMinGames = 10;
 
+const requiredFields = ['name', 'description', 'startDate', 'endDate'];
+const isFormValid = (form: any) => {
+  return !requiredFields.find(reqField => !form[reqField]);
+};
+
 export interface CreateTournamentViewProps extends ViewProps {
   tournament: any;
+  onSavePressed: (form: any) => void;
 }
 export const CreateTournamentView: FunctionComponent<
   CreateTournamentViewProps
@@ -59,6 +65,7 @@ export const CreateTournamentView: FunctionComponent<
     maxPlayers = 20,
     minGames = defaultMinGames,
   },
+  onSavePressed,
 }) => {
   const [form, setForm] = useState({
     name,
@@ -70,8 +77,19 @@ export const CreateTournamentView: FunctionComponent<
     maxPlayers,
     minGames,
   });
+  const [saveDisabled, setSaveDisabled] = useState(true);
   const startDatePickerRef = useRef(null);
   const endDatePickerRef = useRef(null);
+
+  useEffect(() => {
+    const formValid = isFormValid(form);
+
+    if (formValid && saveDisabled) {
+      setSaveDisabled(false);
+    } else if (!formValid && !saveDisabled) {
+      setSaveDisabled(true);
+    }
+  }, [form]);
 
   const now = moment().add(10, 'minute');
   const defaultStartDate = now.clone().add(1, 'hour');
@@ -83,7 +101,11 @@ export const CreateTournamentView: FunctionComponent<
     : 'Select tournament privacy';
 
   return (
-    <KeyboardAwareScrollView>
+    <KeyboardAwareScrollView
+      keyboardShouldPersistTaps="always"
+      keyboardDismissMode="on-drag"
+      enableResetScrollToCoords={false}
+    >
       <View style={styles.container}>
         <View
           style={{
@@ -266,7 +288,14 @@ export const CreateTournamentView: FunctionComponent<
           <TextX style={{ fontSize: 16 }}>Invite participants</TextX>
         </TouchableOpacity>
 
-        <ButtonX title="SAVE" />
+        <ButtonX
+          style={{ alignSelf: 'center' }}
+          title="SAVE"
+          disabled={saveDisabled}
+          onPress={() => {
+            !saveDisabled && onSavePressed(form);
+          }}
+        />
 
         <View style={{ height: 60 }} />
       </View>
@@ -302,6 +331,6 @@ const styles = StyleSheet.create({
   inviteParticipantsBtn: {
     minHeight: 54,
     justifyContent: 'center',
-    marginBottom: 30,
+    marginBottom: 40,
   },
 });

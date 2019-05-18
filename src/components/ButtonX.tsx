@@ -6,33 +6,53 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import { TextX } from './TextX';
+import { TextX, TextXProps } from './TextX';
+import { colors } from '../config/styles';
 
 interface Props extends TouchableOpacityProps {
   title: string;
   isLoading?: boolean;
+  textProps?: TextXProps;
 }
 export const ButtonX: FunctionComponent<Props> = ({
   style,
   title,
   isLoading,
+  textProps: { style: textStyle, ...textProps } = {},
+  disabled,
   ...props
 }) => {
   return (
-    <TouchableOpacity style={[styles.button, style]} {...props}>
-      {isLoading ? <ActivityIndicator /> : <TextX>{title}</TextX>}
+    <TouchableOpacity
+      style={[styles.button, style, disabled && styles.disabledButton]}
+      disabled={disabled}
+      {...props}
+    >
+      {isLoading ? (
+        <ActivityIndicator />
+      ) : (
+        <TextX style={[styles.text, textStyle]} {...textProps}>
+          {title}
+        </TextX>
+      )}
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    borderColor: '#000',
-    borderWidth: 1,
     padding: 12,
-    minWidth: 80,
+    width: 220,
+    borderRadius: 1000,
     minHeight: 46,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: colors.primary,
+  },
+  disabledButton: {
+    backgroundColor: '#ccc',
+  },
+  text: {
+    color: '#fff',
   },
 });

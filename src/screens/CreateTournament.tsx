@@ -8,7 +8,6 @@ import { IScreenComponent, ScreenComponentProps } from './index';
 import { TOP_BAR_ICON_SIZE } from '../config/styles';
 import { useNavBtnPress } from '../hooks';
 
-const SAVE_ID = 'CreateTournament.save';
 const CLOSE_ID = 'CreateTournament.close';
 
 let closeIcon: ImageURISource;
@@ -24,7 +23,16 @@ export const CreateTournament: IScreenComponent<TournamentsProps> = ({
     Navigation.dismissModal(componentId);
   }, CLOSE_ID);
 
-  return <CreateTournamentView tournament={{}} />;
+  return (
+    <CreateTournamentView
+      tournament={{}}
+      onSavePressed={(form: any) => {
+        console.log('====================================');
+        console.log('save pressed', form);
+        console.log('====================================');
+      }}
+    />
+  );
 };
 
 CreateTournament.options = (): Options => ({
@@ -33,13 +41,6 @@ CreateTournament.options = (): Options => ({
     title: {
       text: 'New Tournament',
     },
-    rightButtons: [
-      {
-        id: SAVE_ID,
-        text: 'SAVE',
-        color: '#000',
-      },
-    ],
     leftButtons: [
       {
         id: CLOSE_ID,
