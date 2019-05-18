@@ -5,3 +5,4 @@ export * from './ButtonX';
 export * from './ImageX';
 export * from './ProfileView';
 export * from './Avatar';
+export * from './CreateTournamentView';

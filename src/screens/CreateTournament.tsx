@@ -1,45 +1,49 @@
 import React from 'react';
-import { ImageURISource } from 'react-native';
+import { ImageURISource, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { Options } from 'react-native-navigation';
+import { Options, Navigation } from 'react-native-navigation';
 
-import { ScreenContainer, TextX } from '../components';
+import { CreateTournamentView } from '../components';
 import { IScreenComponent, ScreenComponentProps } from './index';
 import { TOP_BAR_ICON_SIZE } from '../config/styles';
 import { useNavBtnPress } from '../hooks';
 
-const ADD_ID = 'Tournaments.settings';
+const SAVE_ID = 'CreateTournament.save';
+const CLOSE_ID = 'CreateTournament.close';
 
-let addIcon: ImageURISource;
-Icon.getImageSource('plus', TOP_BAR_ICON_SIZE, undefined).then(src => {
-  addIcon = src;
+let closeIcon: ImageURISource;
+Icon.getImageSource('times', TOP_BAR_ICON_SIZE, undefined).then(src => {
+  closeIcon = src;
 });
 
 export interface TournamentsProps extends ScreenComponentProps {}
-export const CreateTournament: IScreenComponent<TournamentsProps> = () => {
+export const CreateTournament: IScreenComponent<TournamentsProps> = ({
+  componentId,
+}) => {
   useNavBtnPress(() => {
-    console.log('====================================');
-    console.log('pressed add');
-    console.log('====================================');
-  }, ADD_ID);
+    Navigation.dismissModal(componentId);
+  }, CLOSE_ID);
 
-  return (
-    <ScreenContainer>
-      <TextX>CreateTournament</TextX>
-    </ScreenContainer>
-  );
+  return <CreateTournamentView tournament={{}} />;
 };
 
 CreateTournament.options = (): Options => ({
   // @ts-ignore 2322
   topBar: {
     title: {
-      text: 'CreateTournament',
+      text: 'New Tournament',
     },
     rightButtons: [
       {
-        id: ADD_ID,
-        icon: addIcon,
+        id: SAVE_ID,
+        text: 'SAVE',
+        color: '#000',
+      },
+    ],
+    leftButtons: [
+      {
+        id: CLOSE_ID,
+        icon: closeIcon,
       },
     ],
   },

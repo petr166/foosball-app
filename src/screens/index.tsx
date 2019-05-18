@@ -19,7 +19,7 @@ export interface IScreenComponent<P> extends FunctionComponent<P> {
   options?: Options | ((props?: any) => Options);
 }
 export interface ScreenComponentProps {
-  componentId: number;
+  componentId: string;
 }
 
 const registerScreen = (

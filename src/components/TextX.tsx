@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#000',
     fontWeight: '500',
+    fontSize: 15,
   },
   shadowed: {
     textShadowOffset: { width: 0.5, height: 0.5 },

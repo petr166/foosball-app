@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ImageURISource } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Options, Navigation } from 'react-native-navigation';
@@ -9,7 +9,7 @@ import { TOP_BAR_ICON_SIZE } from '../config/styles';
 import { useNavBtnPress } from '../hooks';
 import { CREATE_TOURNAMENT } from './screenNames';
 
-const ADD_ID = 'Tournaments.settings';
+const ADD_ID = 'Tournaments.add';
 
 let addIcon: ImageURISource;
 Icon.getImageSource('plus', TOP_BAR_ICON_SIZE, undefined).then(src => {
@@ -29,6 +29,19 @@ export const Tournaments: IScreenComponent<TournamentsProps> = () => {
       },
     });
   }, ADD_ID);
+
+  // TODO: remove
+  useEffect(() => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: { name: CREATE_TOURNAMENT },
+          },
+        ],
+      },
+    });
+  }, []);
 
   return (
     <ScreenContainer>
