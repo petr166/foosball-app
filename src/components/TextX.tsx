@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   shadowed: {
-    textShadowOffset: { width: 1, height: 1 },
+    textShadowOffset: { width: 0.5, height: 0.5 },
     textShadowColor: 'rgba(0,0,0,.3)',
     textShadowRadius: 1,
   },

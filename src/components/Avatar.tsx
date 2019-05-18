@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
     borderColor: colors.secondary,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#fff',
   },
   img: {
     overflow: 'hidden',

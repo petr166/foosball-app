@@ -20,12 +20,14 @@ export const Game: FunctionComponent<GameProps> = ({
   return (
     <View style={[styles.container, style]} {...props}>
       <View style={styles.header}>
-        <TextX>
+        <TextX style={styles.headerText}>
           <Icon name="trophy" color={colors.gold} />
           &nbsp;
           {tournament.name}
         </TextX>
-        <TextX>{moment(Number(time)).fromNow()}</TextX>
+        <TextX style={styles.headerText}>
+          {moment(Number(time)).fromNow()}
+        </TextX>
       </View>
 
       <View style={styles.content}>
@@ -47,10 +49,35 @@ export const Team: FunctionComponent<TeamProps> = ({
   style,
   ...props
 }) => {
+  const avatarSize = team[1] ? 58 : 64;
+
   return (
     <View style={[styles.teamContainer]} {...props}>
-      <Avatar avatar={team[0].avatar} size={64} />
-      <TextX style={styles.name}>{separateName(team[0].name).firstName}</TextX>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar
+          style={{ zIndex: 1, elevation: 1 }}
+          avatar={team[0].avatar}
+          size={avatarSize}
+        />
+        {team[1] && (
+          <Avatar
+            style={{ marginLeft: -22 }}
+            avatar={team[1].avatar}
+            size={avatarSize}
+          />
+        )}
+      </View>
+
+      <TextX adjustsFontSizeToFit numberOfLines={1} style={styles.name}>
+        {separateName(team[0].name).firstName}
+        {team[1] && ' & ' + separateName(team[1].name).firstName}
+      </TextX>
     </View>
   );
 };
@@ -64,13 +91,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 16,
     paddingTop: 10,
+    backgroundColor: '#fff',
+    justifyContent: 'space-between',
     ...getBoxShadowStyles(),
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 14,
+    marginBottom: 16,
+  },
+  headerText: {
+    fontSize: 13,
   },
   content: {
     flexDirection: 'row',
@@ -88,6 +120,7 @@ const styles = StyleSheet.create({
   },
   name: {
     marginTop: 8,
-    fontSize: 15,
+    fontSize: 16,
+    maxWidth: 100,
   },
 });
