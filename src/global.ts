@@ -19,7 +19,7 @@ export interface IGlobalState {
 export const initialState: IGlobalState = {
   root: ROOT.REGISTER,
   authToken: null,
-  currentUser: {},
+  currentUser: { games: { edges: [] } },
 };
 
 const persistState = (globalState: IGlobalState) => {

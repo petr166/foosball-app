@@ -5,3 +5,4 @@ export const TOURNAMENTS = 'root.TOURNAMENTS';
 export const NOTIFICATIONS = 'root.NOTIFICATIONS';
 export const PROFILE = 'root.PROFILE';
 export const MY_PROFILE = 'root.MY_PROFILE';
+export const CREATE_TOURNAMENT = 'root.CREATE_TOURNAMENT';

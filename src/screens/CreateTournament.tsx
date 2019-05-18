@@ -1,13 +1,12 @@
 import React from 'react';
 import { ImageURISource } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { Options, Navigation } from 'react-native-navigation';
+import { Options } from 'react-native-navigation';
 
 import { ScreenContainer, TextX } from '../components';
 import { IScreenComponent, ScreenComponentProps } from './index';
 import { TOP_BAR_ICON_SIZE } from '../config/styles';
 import { useNavBtnPress } from '../hooks';
-import { CREATE_TOURNAMENT } from './screenNames';
 
 const ADD_ID = 'Tournaments.settings';
 
@@ -17,31 +16,25 @@ Icon.getImageSource('plus', TOP_BAR_ICON_SIZE, undefined).then(src => {
 });
 
 export interface TournamentsProps extends ScreenComponentProps {}
-export const Tournaments: IScreenComponent<TournamentsProps> = () => {
+export const CreateTournament: IScreenComponent<TournamentsProps> = () => {
   useNavBtnPress(() => {
-    Navigation.showModal({
-      stack: {
-        children: [
-          {
-            component: { name: CREATE_TOURNAMENT },
-          },
-        ],
-      },
-    });
+    console.log('====================================');
+    console.log('pressed add');
+    console.log('====================================');
   }, ADD_ID);
 
   return (
     <ScreenContainer>
-      <TextX>Tournaments</TextX>
+      <TextX>CreateTournament</TextX>
     </ScreenContainer>
   );
 };
 
-Tournaments.options = (): Options => ({
+CreateTournament.options = (): Options => ({
   // @ts-ignore 2322
   topBar: {
     title: {
-      text: 'Tournaments',
+      text: 'CreateTournament',
     },
     rightButtons: [
       {

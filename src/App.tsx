@@ -50,7 +50,7 @@ const startApp = async (root: ROOT) => {
     bottomTabs: {
       animate: true,
       titleDisplayMode: 'alwaysShow',
-      currentTabIndex: 3, // TODO: dev remove
+      currentTabIndex: 1, // TODO: dev remove
     },
     bottomTab: {
       selectedIconColor: colors.primary,
