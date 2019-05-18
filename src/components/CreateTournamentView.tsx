@@ -10,9 +10,38 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import DatePicker from 'react-native-datepicker';
 import moment from 'moment';
 
-import { TextX, InputX } from '../components';
+import { TextX, InputX, OptionsX } from '../components';
+import { colors } from '../config/styles';
+import { ButtonX } from './ButtonX';
 
 const maxDate = moment().add(5, 'year');
+
+const privacyOptions = [
+  {
+    name: 'public',
+    value: 'public',
+    helper: 'Everyone can join the tournament',
+  },
+  {
+    name: 'private',
+    value: 'private',
+    helper: 'Users will need an invitation to participate',
+  },
+];
+
+const teamSizeOptions = [
+  { name: '1 v 1', value: 1 },
+  { name: '2 v 2', value: 2 },
+];
+
+const maxPlayersOptions = [
+  { name: '10', value: 10 },
+  { name: '20', value: 20 },
+  { name: '50', value: 50 },
+  { name: '100', value: 100 },
+];
+
+const defaultMinGames = 10;
 
 export interface CreateTournamentViewProps extends ViewProps {
   tournament: any;
@@ -20,9 +49,27 @@ export interface CreateTournamentViewProps extends ViewProps {
 export const CreateTournamentView: FunctionComponent<
   CreateTournamentViewProps
 > = ({
-  tournament: { name = '', description = '', startDate = '', endDate = '' },
+  tournament: {
+    name = '',
+    description = '',
+    startDate = '',
+    endDate = '',
+    privacy = 'public',
+    teamSize = 1,
+    maxPlayers = 20,
+    minGames = defaultMinGames,
+  },
 }) => {
-  const [form, setForm] = useState({ name, description, startDate, endDate });
+  const [form, setForm] = useState({
+    name,
+    description,
+    startDate,
+    endDate,
+    privacy,
+    teamSize,
+    maxPlayers,
+    minGames,
+  });
   const startDatePickerRef = useRef(null);
   const endDatePickerRef = useRef(null);
 
@@ -30,136 +77,199 @@ export const CreateTournamentView: FunctionComponent<
   const defaultStartDate = now.clone().add(1, 'hour');
   const defaultEndDate = defaultStartDate.clone().add(7, 'day');
 
+  const selectedPrivacy = privacyOptions.find(v => v.value === form.privacy);
+  const helper = selectedPrivacy
+    ? selectedPrivacy.helper
+    : 'Select tournament privacy';
+
   return (
-    <KeyboardAwareScrollView contentContainerStyle={styles.container}>
-      <View
-        style={{
-          height: 120,
-          width: '100%',
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderTopWidth: 1,
-          borderBottomWidth: 1,
-        }}
-      >
-        <TextX>Cover</TextX>
+    <KeyboardAwareScrollView>
+      <View style={styles.container}>
+        <View
+          style={{
+            height: 120,
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderTopWidth: 1,
+            borderBottomWidth: 1,
+          }}
+        >
+          <TextX>Cover</TextX>
+        </View>
+
+        <TextX style={styles.label}>Name</TextX>
+        <InputX
+          style={styles.input}
+          value={form.name}
+          onChangeText={val => {
+            setForm(prev => ({ ...prev, name: val }));
+          }}
+          placeholder="My Tournament"
+          autoCapitalize="words"
+        />
+
+        <TextX style={styles.label}>Description</TextX>
+        <InputX
+          style={[styles.input, styles.multiLine]}
+          value={form.description}
+          onChangeText={val => {
+            setForm(prev => ({ ...prev, description: val }));
+          }}
+          placeholder="Write tournament's description, rules, prizes etc."
+          autoCapitalize="sentences"
+          multiline
+          textAlignVertical="top"
+        />
+
+        <TextX style={styles.label}>Start date</TextX>
+        <TouchableOpacity
+          style={[styles.input]}
+          onPress={() => {
+            if (startDatePickerRef.current) {
+              // @ts-ignore 2531
+              startDatePickerRef.current.onPressDate();
+            }
+          }}
+        >
+          <Text style={[!form.startDate && { color: colors.helper }]}>
+            {!form.startDate
+              ? 'Choose start date'
+              : moment(form.startDate).format('DD-MM-YYYY, hh:mm a')}
+          </Text>
+
+          <DatePicker
+            ref={startDatePickerRef}
+            date={!!form.startDate ? moment(form.startDate) : defaultStartDate}
+            style={{ height: 0, width: 0 }}
+            showIcon={false}
+            hideText
+            mode="datetime"
+            minDate={now.toDate()}
+            maxDate={maxDate.toDate()}
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            customStyles={{
+              btnTextConfirm: {
+                color: '#000',
+              },
+            }}
+            onDateChange={dateString => {
+              const newStart = moment(dateString);
+              setForm(prev => ({
+                ...prev,
+                startDate: newStart.toISOString(),
+                endDate:
+                  !!form.endDate && moment(form.endDate).isBefore(newStart)
+                    ? ''
+                    : prev.endDate,
+              }));
+            }}
+          />
+        </TouchableOpacity>
+
+        <TextX style={styles.label}>End date</TextX>
+        <TouchableOpacity
+          style={[styles.input]}
+          onPress={() => {
+            if (endDatePickerRef.current) {
+              // @ts-ignore 2531
+              endDatePickerRef.current.onPressDate();
+            }
+          }}
+        >
+          <Text style={[!form.endDate && { color: colors.helper }]}>
+            {!form.endDate
+              ? 'Choose end date'
+              : moment(form.endDate).format('DD-MM-YYYY, hh:mm a')}
+          </Text>
+
+          <DatePicker
+            ref={endDatePickerRef}
+            date={!!form.endDate ? moment(form.endDate) : defaultEndDate}
+            style={{ height: 0, width: 0 }}
+            showIcon={false}
+            hideText
+            mode="datetime"
+            minDate={now.toDate()}
+            maxDate={maxDate.toDate()}
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            customStyles={{
+              btnTextConfirm: {
+                color: '#000',
+              },
+            }}
+            onDateChange={dateString => {
+              const newEnd = moment(dateString);
+              setForm(prev => ({
+                ...prev,
+                endDate: newEnd.toISOString(),
+                startDate:
+                  !!form.startDate && moment(form.startDate).isAfter(newEnd)
+                    ? ''
+                    : prev.startDate,
+              }));
+            }}
+          />
+        </TouchableOpacity>
+
+        <TextX style={styles.label}>Privacy</TextX>
+        <OptionsX
+          options={privacyOptions}
+          selectedValue={form.privacy}
+          onSelect={val => {
+            setForm(prev => ({ ...prev, privacy: val }));
+          }}
+        />
+        <TextX style={styles.helper} shadowed={false}>
+          {helper}
+        </TextX>
+
+        <TextX style={styles.label}>Team size</TextX>
+        <OptionsX
+          options={teamSizeOptions}
+          selectedValue={form.teamSize}
+          onSelect={val => {
+            setForm(prev => ({ ...prev, teamSize: val }));
+          }}
+        />
+
+        <TextX style={styles.label}>Max number of players</TextX>
+        <OptionsX
+          options={maxPlayersOptions}
+          selectedValue={form.maxPlayers}
+          onSelect={val => {
+            setForm(prev => ({ ...prev, maxPlayers: val }));
+          }}
+        />
+
+        <TextX style={styles.label}>Min number of games</TextX>
+        <InputX
+          style={[styles.input, { borderBottomWidth: 0 }]}
+          value={String(form.minGames)}
+          onChangeText={val => {
+            const numVal = Number(val);
+
+            setForm(prev => ({
+              ...prev,
+              minGames:
+                !!numVal && numVal > 0 && numVal < 500
+                  ? numVal
+                  : defaultMinGames,
+            }));
+          }}
+          keyboardType="numeric"
+        />
+
+        <TouchableOpacity style={[styles.input, styles.inviteParticipantsBtn]}>
+          <TextX style={{ fontSize: 16 }}>Invite participants</TextX>
+        </TouchableOpacity>
+
+        <ButtonX title="SAVE" />
+
+        <View style={{ height: 60 }} />
       </View>
-
-      <TextX style={styles.label}>Name</TextX>
-      <InputX
-        style={styles.input}
-        value={form.name}
-        onChangeText={val => {
-          setForm(prev => ({ ...prev, name: val }));
-        }}
-        placeholder="My Tournament"
-        autoCapitalize="words"
-      />
-
-      <TextX style={styles.label}>Description</TextX>
-      <InputX
-        style={[styles.input, styles.multiLine]}
-        value={form.description}
-        onChangeText={val => {
-          setForm(prev => ({ ...prev, description: val }));
-        }}
-        placeholder="Write tournament's description, rules, prizes etc."
-        autoCapitalize="sentences"
-        multiline
-        textAlignVertical="top"
-      />
-
-      <TextX style={styles.label}>Start date</TextX>
-      <TouchableOpacity
-        style={[styles.input]}
-        onPress={() => {
-          if (startDatePickerRef.current) {
-            // @ts-ignore 2531
-            startDatePickerRef.current.onPressDate();
-          }
-        }}
-      >
-        <Text style={[!form.startDate && { color: '#C7C7CD' }]}>
-          {!form.startDate
-            ? 'Choose start date'
-            : moment(form.startDate).format('DD-MM-YYYY, hh:mm a')}
-        </Text>
-
-        <DatePicker
-          ref={startDatePickerRef}
-          date={!!form.startDate ? moment(form.startDate) : defaultStartDate}
-          style={{ height: 0, width: 0 }}
-          showIcon={false}
-          hideText
-          mode="datetime"
-          minDate={now.toDate()}
-          maxDate={maxDate.toDate()}
-          confirmBtnText="Confirm"
-          cancelBtnText="Cancel"
-          customStyles={{
-            btnTextConfirm: {
-              color: '#000',
-            },
-          }}
-          onDateChange={dateString => {
-            const newStart = moment(dateString);
-            setForm(prev => ({
-              ...prev,
-              startDate: newStart.toISOString(),
-              endDate:
-                !!form.endDate && moment(form.endDate).isBefore(newStart)
-                  ? ''
-                  : prev.endDate,
-            }));
-          }}
-        />
-      </TouchableOpacity>
-
-      <TextX style={styles.label}>End date</TextX>
-      <TouchableOpacity
-        style={[styles.input]}
-        onPress={() => {
-          if (endDatePickerRef.current) {
-            // @ts-ignore 2531
-            endDatePickerRef.current.onPressDate();
-          }
-        }}
-      >
-        <Text style={[!form.endDate && { color: '#C7C7CD' }]}>
-          {!form.endDate
-            ? 'Choose end date'
-            : moment(form.endDate).format('DD-MM-YYYY, hh:mm a')}
-        </Text>
-
-        <DatePicker
-          ref={endDatePickerRef}
-          date={!!form.endDate ? moment(form.endDate) : defaultEndDate}
-          style={{ height: 0, width: 0 }}
-          showIcon={false}
-          hideText
-          mode="datetime"
-          minDate={now.toDate()}
-          maxDate={maxDate.toDate()}
-          confirmBtnText="Confirm"
-          cancelBtnText="Cancel"
-          customStyles={{
-            btnTextConfirm: {
-              color: '#000',
-            },
-          }}
-          onDateChange={dateString => {
-            const newEnd = moment(dateString);
-            setForm(prev => ({
-              ...prev,
-              endDate: newEnd.toISOString(),
-              startDate:
-                !!form.startDate && moment(form.startDate).isAfter(newEnd)
-                  ? ''
-                  : prev.startDate,
-            }));
-          }}
-        />
-      </TouchableOpacity>
     </KeyboardAwareScrollView>
   );
 };
@@ -167,7 +277,6 @@ export const CreateTournamentView: FunctionComponent<
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'flex-start',
   },
   input: {
     borderWidth: 0,
@@ -183,5 +292,16 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     marginBottom: 5,
     marginTop: 26,
+  },
+  helper: {
+    fontSize: 14,
+    paddingLeft: 10,
+    paddingTop: 5,
+    color: colors.helper,
+  },
+  inviteParticipantsBtn: {
+    minHeight: 54,
+    justifyContent: 'center',
+    marginBottom: 30,
   },
 });
