@@ -16,14 +16,14 @@ import { Avatar } from './Avatar';
 import { TextX } from './TextX';
 import { getNavBarHeight } from '../utils';
 import { colors } from '../config/styles';
-import { DocConnection } from '../interfaces';
+import { PaginatedDocument } from '../interfaces';
 import { Game } from './Game';
 import { IGame, IUserProfile } from '../fragments';
 
 const SCREEN_MARGIN = 16;
 
 export interface IUserProfileWithGames extends IUserProfile {
-  games: DocConnection<IGame>;
+  games: PaginatedDocument<IGame>;
 }
 
 export interface ProfileViewProps extends ViewProps {

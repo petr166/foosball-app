@@ -1,4 +1,4 @@
-export interface DocConnection<T> {
+export interface PaginatedDocument<T> {
   totalCount: number;
   pageInfo: {
     hasNextPage: boolean;
