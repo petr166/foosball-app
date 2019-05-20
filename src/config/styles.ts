@@ -3,6 +3,10 @@ export const colors = {
   secondary: '#693a61',
   gold: '#FFA500',
   helper: '#C7C7CD',
+  warning: '#f4d15e',
+  information: '#59b1dc',
+  error: '#ff6b6b',
+  success: '#3fd0ae',
 };
 
 export const BOTTOM_TAB_ICON_SIZE = 25;

@@ -1,12 +1,15 @@
-import React from 'react';
-import { ImageURISource, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { ImageURISource } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Options, Navigation } from 'react-native-navigation';
+import { gql } from 'apollo-boost';
 
 import { CreateTournamentView } from '../components';
 import { IScreenComponent, ScreenComponentProps } from './index';
 import { TOP_BAR_ICON_SIZE } from '../config/styles';
-import { useNavBtnPress } from '../hooks';
+import { useNavBtnPress, useLoading } from '../hooks';
+import { useMutation } from 'react-apollo-hooks';
+import { showBanner } from '../utils';
 
 const CLOSE_ID = 'CreateTournament.close';
 
@@ -15,21 +18,66 @@ Icon.getImageSource('times', TOP_BAR_ICON_SIZE, undefined).then(src => {
   closeIcon = src;
 });
 
+const CREATE_TOURNAMENT = gql`
+  mutation CreateTournament($input: TournamentInput!) {
+    createTournament(input: $input) {
+      id
+    }
+  }
+`;
+
 export interface TournamentsProps extends ScreenComponentProps {}
 export const CreateTournament: IScreenComponent<TournamentsProps> = ({
   componentId,
 }) => {
+  const createTournamentReq = useMutation(CREATE_TOURNAMENT);
+  const [, setLoading, error] = useLoading(false);
   useNavBtnPress(() => {
     Navigation.dismissModal(componentId);
   }, CLOSE_ID);
+
+  useEffect(() => {
+    if (error) showBanner({ type: 'error', message: error });
+  }, [error]);
 
   return (
     <CreateTournamentView
       tournament={{}}
       onSavePressed={(form: any) => {
-        console.log('====================================');
-        console.log('save pressed', form);
-        console.log('====================================');
+        const {
+          name,
+          description,
+          startDate,
+          endDate,
+          privacy,
+          teamSize,
+          maxPlayers,
+          minGames,
+        } = form;
+
+        setLoading(true);
+        createTournamentReq({
+          variables: {
+            input: {
+              name,
+              description,
+              startDate,
+              endDate,
+              privacy,
+              teamSize,
+              maxPlayers,
+              minGames,
+            },
+          },
+        })
+          .then(() => {
+            Navigation.dismissModal(componentId).finally(() => {
+              showBanner({ type: 'success' });
+            });
+          })
+          .catch(err => {
+            setLoading(false, err);
+          });
       }}
     />
   );

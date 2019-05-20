@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from 'react';
 import { Navigation, Options } from 'react-native-navigation';
-import { ComponentType } from 'react';
 import { ApolloClient } from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo-hooks';
 
@@ -14,6 +13,8 @@ import { Notifications } from './Notifications';
 import { Profile } from './Profile';
 import { MyProfile } from './MyProfile';
 import { CreateTournament } from './CreateTournament';
+import { Loading } from './Misc/Loading';
+import { Banner } from './Misc/Banner';
 
 export interface IScreenComponent<P> extends FunctionComponent<P> {
   options?: Options | ((props?: any) => Options);
@@ -47,4 +48,6 @@ export const registerAppScreens = (apolloClient: ApolloClient<any>) => {
   registerScreen(screenNames.PROFILE, Profile, apolloClient);
   registerScreen(screenNames.MY_PROFILE, MyProfile, apolloClient);
   registerScreen(screenNames.CREATE_TOURNAMENT, CreateTournament, apolloClient);
+  registerScreen(screenNames.LOADING_OVERLAY, Loading, apolloClient);
+  registerScreen(screenNames.BANNER, Banner, apolloClient);
 };

@@ -1,4 +1,9 @@
 import { Platform, Dimensions } from 'react-native';
+import { Navigation } from 'react-native-navigation';
+
+import { LOADING_OVERLAY, BANNER } from '../screens';
+
+export const LOADING_OVERLAY_COMPONENT_ID = 'LOADING_OVERLAY_COMPONENT_ID';
 
 export const getNavBarHeight = () => {
   if (Platform.OS === 'ios') {
@@ -26,3 +31,19 @@ export const getBoxShadowStyles = (options: any = {}) => ({
   shadowOpacity: 0.3,
   ...options,
 });
+
+export const showLoadingOverlay = () => {
+  Navigation.showOverlay({
+    component: { id: LOADING_OVERLAY_COMPONENT_ID, name: LOADING_OVERLAY },
+  });
+
+  return () => {
+    Navigation.dismissOverlay(LOADING_OVERLAY_COMPONENT_ID);
+  };
+};
+
+export const showBanner = async (props: any) => {
+  return Navigation.showOverlay({
+    component: { name: BANNER, passProps: props },
+  });
+};
