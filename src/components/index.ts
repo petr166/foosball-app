@@ -7,3 +7,4 @@ export * from './ProfileView';
 export * from './Avatar';
 export * from './CreateTournamentView';
 export * from './OptionsX';
+export * from './SearchBar';

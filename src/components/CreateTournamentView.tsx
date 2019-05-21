@@ -50,7 +50,8 @@ const isFormValid = (form: any) => {
 
 export interface CreateTournamentViewProps extends ViewProps {
   tournament: any;
-  onSavePressed: (form: any) => void;
+  onSavePress: (form: any) => void;
+  onInviteParticipantsPress: (inviteList: string[]) => void;
 }
 export const CreateTournamentView: FunctionComponent<
   CreateTournamentViewProps
@@ -64,8 +65,10 @@ export const CreateTournamentView: FunctionComponent<
     teamSize = 1,
     maxPlayers = 20,
     minGames = defaultMinGames,
+    inviteList = [],
   },
-  onSavePressed,
+  onSavePress,
+  onInviteParticipantsPress,
 }) => {
   const [form, setForm] = useState({
     name,
@@ -76,6 +79,7 @@ export const CreateTournamentView: FunctionComponent<
     teamSize,
     maxPlayers,
     minGames,
+    inviteList,
   });
   const [saveDisabled, setSaveDisabled] = useState(true);
   const startDatePickerRef = useRef(null);
@@ -284,8 +288,16 @@ export const CreateTournamentView: FunctionComponent<
           keyboardType="numeric"
         />
 
-        <TouchableOpacity style={[styles.input, styles.inviteParticipantsBtn]}>
-          <TextX style={{ fontSize: 16 }}>Invite participants</TextX>
+        <TouchableOpacity
+          style={[styles.input, styles.inviteParticipantsBtn]}
+          onPress={() => {
+            onInviteParticipantsPress(form.inviteList);
+          }}
+        >
+          <TextX style={{ fontSize: 16 }}>
+            Invite participants{' '}
+            {!!form.inviteList.length && `(${form.inviteList.length})`}
+          </TextX>
         </TouchableOpacity>
 
         <ButtonX
@@ -293,7 +305,7 @@ export const CreateTournamentView: FunctionComponent<
           title="SAVE"
           disabled={saveDisabled}
           onPress={() => {
-            !saveDisabled && onSavePressed(form);
+            !saveDisabled && onSavePress(form);
           }}
         />
 

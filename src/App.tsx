@@ -14,6 +14,11 @@ import { initApolloClient } from './apollo';
 import { initGlobal, ROOT, IGlobalState } from './global';
 import { addCallback } from 'reactn';
 import { BOTTOM_TAB_ICON_SIZE, colors } from './config/styles';
+import { UIManager } from 'react-native';
+
+// activate LayoutAnimation on android
+UIManager.setLayoutAnimationEnabledExperimental &&
+  UIManager.setLayoutAnimationEnabledExperimental(true);
 
 let oldRoot: ROOT;
 const handleRootChange = (globalState: IGlobalState) => {
@@ -47,6 +52,22 @@ const startApp = async (root: ROOT) => {
   oldRoot = root;
 
   Navigation.setDefaultOptions({
+    topBar: {
+      animate: true,
+      // @ts-ignore 2322
+      leftButtonColor: '#000',
+      rightButtonColor: '#000',
+      alignment: 'center',
+      title: {
+        alignment: 'center',
+        color: '#000',
+      },
+      backButton: {
+        color: '#000',
+        title: '',
+        showTitle: false,
+      },
+    },
     bottomTabs: {
       animate: true,
       titleDisplayMode: 'alwaysShow',

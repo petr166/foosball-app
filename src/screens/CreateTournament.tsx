@@ -10,6 +10,7 @@ import { TOP_BAR_ICON_SIZE } from '../config/styles';
 import { useNavBtnPress, useLoading } from '../hooks';
 import { useMutation } from 'react-apollo-hooks';
 import { showBanner } from '../utils';
+import { INVITE_PARTICIPANTS } from './screenNames';
 
 const CLOSE_ID = 'CreateTournament.close';
 
@@ -40,10 +41,22 @@ export const CreateTournament: IScreenComponent<TournamentsProps> = ({
     if (error) showBanner({ type: 'error', message: error });
   }, [error]);
 
+  // TODO: remove
+  useEffect(() => {
+    Navigation.push(componentId, {
+      component: { name: INVITE_PARTICIPANTS, passProps: { inviteList: [] } },
+    });
+  }, []);
+
   return (
     <CreateTournamentView
       tournament={{}}
-      onSavePressed={(form: any) => {
+      onInviteParticipantsPress={(inviteList: string[] = []) => {
+        Navigation.push(componentId, {
+          component: { name: INVITE_PARTICIPANTS, passProps: { inviteList } },
+        });
+      }}
+      onSavePress={(form: any) => {
         const {
           name,
           description,
