@@ -71,6 +71,13 @@ export const MyProfile: IScreenComponent<MyProfileProps> = () => {
     }
   };
 
+  // TODO: useQueryWithLoading
+  if (error) {
+    console.log('====================================');
+    console.log(error);
+    console.log('====================================');
+  }
+
   return (
     <ProfileView
       user={currentUser}
