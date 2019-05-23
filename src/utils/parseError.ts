@@ -1,7 +1,7 @@
-export interface ExtendedError extends Error {
+import { ApolloError } from 'apollo-boost';
+
+export interface ExtendedError extends ApolloError {
   text?: string;
-  networkError?: Error;
-  graphQLErrors?: any[];
 }
 
 export const parseError = (error: ExtendedError) => {

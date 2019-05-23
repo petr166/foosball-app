@@ -47,3 +47,7 @@ export const showBanner = async (props: any) => {
     component: { name: BANNER, passProps: props },
   });
 };
+
+export const listKeyExtractor = (item: any) => {
+  return item.id;
+};

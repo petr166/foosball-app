@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { v1 as uuid } from 'uuid';
+import { ApolloError } from 'apollo-boost';
 
 import { parseError, ExtendedError, showLoadingOverlay } from '../utils';
 
@@ -18,7 +19,7 @@ export const useLoading = (
   boolean,
   (
     val: boolean,
-    error?: Error | null | undefined,
+    error?: ApolloError | null | undefined,
     options?: { timeout?: number; withLoadingOverlay?: boolean }
   ) => void,
   string | null | undefined,
@@ -43,7 +44,7 @@ export const useLoading = (
 
   const waitSetLoading = (
     val: boolean,
-    error: Error | null = null,
+    error: ApolloError | null = null,
     options: { timeout?: number; withLoadingOverlay?: boolean } = {}
   ) => {
     const { timeout = 300, withLoadingOverlay } = options;
