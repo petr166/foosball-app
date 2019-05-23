@@ -8,3 +8,5 @@ export * from './Avatar';
 export * from './CreateTournamentView';
 export * from './OptionsX';
 export * from './SearchBar';
+export * from './ListLoadingFooter';
+export * from './UserItem';
