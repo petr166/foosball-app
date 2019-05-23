@@ -1,15 +1,33 @@
 import React, { useEffect, useRef } from 'react';
-import { Options, Navigation } from 'react-native-navigation';
+import { Options } from 'react-native-navigation';
 import { gql } from 'apollo-boost';
+import { debounce } from 'lodash';
+import {
+  FlatList,
+  View,
+  SafeAreaView,
+  Dimensions,
+  Keyboard,
+} from 'react-native';
 
 import { ScreenComponentProps, IScreenComponent } from './index';
 import SearchBar from '../components/SearchBar';
-import { FlatList, View, SafeAreaView, Dimensions } from 'react-native';
 import { UserFragment, IUser } from '../fragments';
 import { useQuery } from 'react-apollo-hooks';
-import { UserItem, ListLoadingFooter, USER_ITEM_HEIGHT } from '../components';
+import {
+  UserItem,
+  ListLoadingFooter,
+  USER_ITEM_HEIGHT,
+  ListEmpty,
+} from '../components';
 import { PaginatedDocument } from '../interfaces';
-import { showBanner, parseError, listKeyExtractor } from '../utils';
+import {
+  showBanner,
+  parseError,
+  listKeyExtractor,
+  mergeWithConcat,
+} from '../utils';
+import { useLoading } from '../hooks';
 
 const GET_USERS = gql`
   query GetUsers($term: String, $first: Int!, $cursor: Int!) {
@@ -32,9 +50,9 @@ const initialCursor = 0;
 const firstToLoad = ~~(Dimensions.get('window').height / USER_ITEM_HEIGHT) * 2;
 
 export interface InviteParticipantsProps extends ScreenComponentProps {}
-export const InviteParticipants: IScreenComponent<InviteParticipantsProps> = ({
-  componentId,
-}) => {
+export const InviteParticipants: IScreenComponent<
+  InviteParticipantsProps
+> = () => {
   const {
     data: {
       users: { edges = [], pageInfo: { hasNextPage = false } = {} } = {},
@@ -45,18 +63,24 @@ export const InviteParticipants: IScreenComponent<InviteParticipantsProps> = ({
     refetch,
   } = useQuery<
     { users: PaginatedDocument<IUser> },
-    { first: number; cursor: number }
+    { first: number; cursor: number; term?: string }
   >(GET_USERS, {
     variables: { first: firstToLoad, cursor: initialCursor },
     notifyOnNetworkStatusChange: true,
   });
+  const [showSpinner, setShowSpinner] = useLoading(false);
   const shouldLoadMore = useRef(false);
+  const termRef = useRef('');
 
   useEffect(() => {
     if (error) {
       showBanner({ type: 'error', message: parseError(error).text });
     }
   }, [error]);
+
+  useEffect(() => {
+    setShowSpinner(loading);
+  }, [loading]);
 
   const itemList = edges.map(v => v.node);
 
@@ -65,39 +89,42 @@ export const InviteParticipants: IScreenComponent<InviteParticipantsProps> = ({
       <SafeAreaView />
 
       <FlatList
+        contentContainerStyle={{ flexGrow: 1 }}
         stickyHeaderIndices={[0]}
         keyboardShouldPersistTaps="always"
         ListHeaderComponent={
           <View style={{ backgroundColor: '#fff' }}>
             <SearchBar
-              inputProps={{
-                onFocus: () => {
-                  Navigation.mergeOptions(componentId, {
-                    topBar: { visible: false },
+              onChangeText={debounce((val: string) => {
+                if (val !== termRef.current) {
+                  refetch({
+                    cursor: initialCursor,
+                    first: firstToLoad,
+                    term: val,
+                  }).finally(() => {
+                    termRef.current = val;
                   });
-                },
-                onBlur: () => {
-                  Navigation.mergeOptions(componentId, {
-                    topBar: { visible: true },
-                  });
-                },
-              }}
+                }
+              }, 300)}
             />
           </View>
         }
-        ListFooterComponent={loading ? <ListLoadingFooter /> : undefined}
+        ListFooterComponent={showSpinner ? <ListLoadingFooter /> : undefined}
+        ListEmptyComponent={!loading ? <ListEmpty /> : undefined}
         onScrollBeginDrag={() => {
           if (!shouldLoadMore.current && !loading) {
             shouldLoadMore.current = true;
           }
+          Keyboard.dismiss();
         }}
         onEndReachedThreshold={0.3}
         onEndReached={() => {
           if (shouldLoadMore.current && hasNextPage && !loading) {
-            // TODO: loadmore
-            console.log('====================================');
-            console.log('LOAD MORE HERE');
-            console.log('====================================');
+            fetchMore({
+              variables: { cursor: edges.length },
+              updateQuery: (prev, { fetchMoreResult }) =>
+                mergeWithConcat(prev, fetchMoreResult),
+            });
 
             if (shouldLoadMore.current) shouldLoadMore.current = false;
           }
