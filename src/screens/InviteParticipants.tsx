@@ -71,6 +71,7 @@ export const InviteParticipants: IScreenComponent<
   const [showSpinner, setShowSpinner] = useLoading(false);
   const shouldLoadMore = useRef(false);
   const termRef = useRef('');
+  const listRef = useRef<any>();
 
   useEffect(() => {
     if (error) {
@@ -89,19 +90,26 @@ export const InviteParticipants: IScreenComponent<
       <SafeAreaView />
 
       <FlatList
+        ref={listRef}
         contentContainerStyle={{ flexGrow: 1 }}
         stickyHeaderIndices={[0]}
         keyboardShouldPersistTaps="always"
         ListHeaderComponent={
           <View style={{ backgroundColor: '#fff' }}>
             <SearchBar
-              onChangeText={debounce((val: string) => {
+              onChangeText={debounce((rawVal: string) => {
+                const val = rawVal.trim();
                 if (val !== termRef.current) {
                   refetch({
                     cursor: initialCursor,
                     first: firstToLoad,
                     term: val,
                   }).finally(() => {
+                    if (listRef.current) {
+                      setTimeout(() => {
+                        listRef.current.scrollToOffset({ offset: 0 });
+                      }, 100);
+                    }
                     termRef.current = val;
                   });
                 }
@@ -131,7 +139,12 @@ export const InviteParticipants: IScreenComponent<
         }}
         keyExtractor={listKeyExtractor}
         data={itemList}
-        renderItem={({ item }) => <UserItem user={item} />}
+        renderItem={({ item, index }) => {
+          const itemStyle: any = {};
+          if (index === 0) itemStyle.borderTopWidth = 1;
+          if (index === itemList.length - 1) itemStyle.borderBottomWidth = 1;
+          return <UserItem style={itemStyle} user={item} />;
+        }}
       />
     </React.Fragment>
   );
