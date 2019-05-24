@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Options } from 'react-native-navigation';
+import React, { useEffect, useRef, useState } from 'react';
+import { Options, Navigation } from 'react-native-navigation';
 import { gql } from 'apollo-boost';
 import { debounce } from 'lodash';
 import {
@@ -26,6 +26,7 @@ import {
   parseError,
   listKeyExtractor,
   mergeWithConcat,
+  toggleItemInArray,
 } from '../utils';
 import { useLoading } from '../hooks';
 
@@ -49,10 +50,15 @@ const GET_USERS = gql`
 const initialCursor = 0;
 const firstToLoad = ~~(Dimensions.get('window').height / USER_ITEM_HEIGHT) * 2;
 
-export interface InviteParticipantsProps extends ScreenComponentProps {}
-export const InviteParticipants: IScreenComponent<
-  InviteParticipantsProps
-> = () => {
+export interface InviteParticipantsProps extends ScreenComponentProps {
+  inviteList: string[];
+  onListUpdate?: (updatedList: string[]) => void;
+}
+export const InviteParticipants: IScreenComponent<InviteParticipantsProps> = ({
+  inviteList,
+  onListUpdate,
+  componentId,
+}) => {
   const {
     data: {
       users: { edges = [], pageInfo: { hasNextPage = false } = {} } = {},
@@ -68,10 +74,13 @@ export const InviteParticipants: IScreenComponent<
     variables: { first: firstToLoad, cursor: initialCursor },
     notifyOnNetworkStatusChange: true,
   });
+  const [invitedListState, setInvitedListState] = useState(inviteList);
   const [showSpinner, setShowSpinner] = useLoading(false);
   const shouldLoadMore = useRef(false);
   const termRef = useRef('');
   const listRef = useRef<any>();
+  const invitedListRef = useRef(invitedListState);
+  invitedListRef.current = invitedListState;
 
   useEffect(() => {
     if (error) {
@@ -83,7 +92,30 @@ export const InviteParticipants: IScreenComponent<
     setShowSpinner(loading);
   }, [loading]);
 
-  const itemList = edges.map(v => v.node);
+  const itemList = edges.map(({ node }) => ({
+    ...node,
+    isSelected: !!invitedListState.find(v => v === node.id),
+  }));
+
+  // unmount
+  useEffect(() => {
+    return () => {
+      onListUpdate && onListUpdate(invitedListRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    Navigation.mergeOptions(componentId, {
+      topBar: {
+        rightButtons: [
+          {
+            id: 'INVITE_PARTICIPANTS_COUNT',
+            text: String(invitedListState.length),
+          },
+        ],
+      },
+    });
+  }, [invitedListState]);
 
   return (
     <React.Fragment>
@@ -143,7 +175,16 @@ export const InviteParticipants: IScreenComponent<
           const itemStyle: any = {};
           if (index === 0) itemStyle.borderTopWidth = 1;
           if (index === itemList.length - 1) itemStyle.borderBottomWidth = 1;
-          return <UserItem style={itemStyle} user={item} />;
+          return (
+            <UserItem
+              style={itemStyle}
+              user={item}
+              isSelected={item.isSelected}
+              onPress={() => {
+                setInvitedListState(prev => toggleItemInArray(item.id, prev));
+              }}
+            />
+          );
         }}
       />
     </React.Fragment>

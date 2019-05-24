@@ -41,19 +41,15 @@ export const CreateTournament: IScreenComponent<TournamentsProps> = ({
     if (error) showBanner({ type: 'error', message: error });
   }, [error]);
 
-  // TODO: remove
-  useEffect(() => {
-    Navigation.push(componentId, {
-      component: { name: INVITE_PARTICIPANTS, passProps: { inviteList: [] } },
-    });
-  }, []);
-
   return (
     <CreateTournamentView
       tournament={{}}
-      onInviteParticipantsPress={(inviteList: string[] = []) => {
+      onInviteParticipantsPress={(inviteList = [], onListUpdate) => {
         Navigation.push(componentId, {
-          component: { name: INVITE_PARTICIPANTS, passProps: { inviteList } },
+          component: {
+            name: INVITE_PARTICIPANTS,
+            passProps: { inviteList, onListUpdate },
+          },
         });
       }}
       onSavePress={(form: any) => {
@@ -66,6 +62,7 @@ export const CreateTournament: IScreenComponent<TournamentsProps> = ({
           teamSize,
           maxPlayers,
           minGames,
+          inviteList,
         } = form;
 
         setLoading(true);
@@ -80,6 +77,7 @@ export const CreateTournament: IScreenComponent<TournamentsProps> = ({
               teamSize,
               maxPlayers,
               minGames,
+              inviteList,
             },
           },
         })

@@ -13,6 +13,7 @@ import moment from 'moment';
 import { TextX, InputX, OptionsX } from '../components';
 import { colors } from '../config/styles';
 import { ButtonX } from './ButtonX';
+import { IUser } from '../fragments';
 
 const maxDate = moment().add(5, 'year');
 
@@ -51,7 +52,10 @@ const isFormValid = (form: any) => {
 export interface CreateTournamentViewProps extends ViewProps {
   tournament: any;
   onSavePress: (form: any) => void;
-  onInviteParticipantsPress: (inviteList: string[]) => void;
+  onInviteParticipantsPress: (
+    inviteList: string[],
+    onListUpdate: (updatedList: string[]) => void
+  ) => void;
 }
 export const CreateTournamentView: FunctionComponent<
   CreateTournamentViewProps
@@ -291,13 +295,18 @@ export const CreateTournamentView: FunctionComponent<
         <TouchableOpacity
           style={[styles.input, styles.inviteParticipantsBtn]}
           onPress={() => {
-            onInviteParticipantsPress(form.inviteList);
+            onInviteParticipantsPress(form.inviteList, newInviteList => {
+              setForm(prevForm => {
+                return {
+                  ...prevForm,
+                  inviteList: newInviteList,
+                };
+              });
+            });
           }}
         >
-          <TextX style={{ fontSize: 16 }}>
-            Invite participants{' '}
-            {!!form.inviteList.length && `(${form.inviteList.length})`}
-          </TextX>
+          <TextX style={{ fontSize: 16 }}>Invite participants</TextX>
+          {!!form.inviteList.length && <TextX>{form.inviteList.length}</TextX>}
         </TouchableOpacity>
 
         <ButtonX
@@ -305,7 +314,7 @@ export const CreateTournamentView: FunctionComponent<
           title="SAVE"
           disabled={saveDisabled}
           onPress={() => {
-            !saveDisabled && onSavePress(form);
+            onSavePress(form);
           }}
         />
 
@@ -342,7 +351,9 @@ const styles = StyleSheet.create({
   },
   inviteParticipantsBtn: {
     minHeight: 54,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     marginBottom: 40,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

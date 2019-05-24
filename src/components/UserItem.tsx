@@ -4,25 +4,42 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { IUser } from '../fragments';
 import { TextX } from './TextX';
 import { Avatar } from './Avatar';
+import { colors } from '../config/styles';
 
 export const USER_ITEM_HEIGHT = 60;
 
 export interface UserItemProps extends TouchableOpacityProps {
   user: IUser;
+  isSelected?: boolean;
 }
 export const UserItem: FunctionComponent<UserItemProps> = ({
   user: { name, avatar },
+  isSelected,
   style,
   ...props
 }) => {
   return (
-    <TouchableOpacity style={[styles.button, style]} {...props}>
+    <TouchableOpacity
+      style={[styles.button, style, isSelected && styles.buttonSelected]}
+      {...props}
+    >
       <Avatar avatar={avatar} size={40} />
       <TextX style={styles.name}>{name}</TextX>
+
+      {!!isSelected && (
+        <Icon
+          style={{ marginLeft: 'auto' }}
+          name="check-circle"
+          color={colors.primary}
+          solid
+          size={25}
+        />
+      )}
     </TouchableOpacity>
   );
 };
@@ -37,6 +54,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 0.5,
     borderTopWidth: 0.5,
+  },
+  buttonSelected: {
+    backgroundColor: '#f5f5f5',
   },
   name: {
     marginLeft: 8,
