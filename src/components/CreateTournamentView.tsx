@@ -13,7 +13,6 @@ import moment from 'moment';
 import { TextX, InputX, OptionsX } from '../components';
 import { colors } from '../config/styles';
 import { ButtonX } from './ButtonX';
-import { IUser } from '../fragments';
 
 const maxDate = moment().add(5, 'year');
 
@@ -41,7 +40,7 @@ const maxPlayersOptions = [
 
 const defaultMinGames = 10;
 
-const requiredFields = ['name', 'description', 'startDate', 'endDate'];
+const requiredFields = ['name', 'startDate', 'endDate'];
 const isFormValid = (form: any) => {
   return !requiredFields.find(reqField => !form[reqField]);
 };
