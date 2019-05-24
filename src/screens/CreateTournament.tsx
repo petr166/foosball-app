@@ -32,7 +32,7 @@ export const CreateTournament: IScreenComponent<TournamentsProps> = ({
   componentId,
 }) => {
   const createTournamentReq = useMutation(CREATE_TOURNAMENT);
-  const [, setLoading, error] = useLoading(false);
+  const [, setLoading, error, , disableButton] = useLoading(false);
   useNavBtnPress(() => {
     Navigation.dismissModal(componentId);
   }, CLOSE_ID);
@@ -44,6 +44,7 @@ export const CreateTournament: IScreenComponent<TournamentsProps> = ({
   return (
     <CreateTournamentView
       tournament={{}}
+      saveBtnDisabled={disableButton}
       onInviteParticipantsPress={(inviteList = [], onListUpdate) => {
         Navigation.push(componentId, {
           component: {

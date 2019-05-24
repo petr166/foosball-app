@@ -52,6 +52,7 @@ export interface CreateTournamentViewProps extends ViewProps {
     inviteList: string[],
     onListUpdate: (updatedList: string[]) => void
   ) => void;
+  saveBtnDisabled?: boolean;
 }
 export const CreateTournamentView: FunctionComponent<
   CreateTournamentViewProps
@@ -69,6 +70,7 @@ export const CreateTournamentView: FunctionComponent<
   },
   onSavePress,
   onInviteParticipantsPress,
+  saveBtnDisabled,
 }) => {
   const [form, setForm] = useState({
     name,
@@ -81,19 +83,15 @@ export const CreateTournamentView: FunctionComponent<
     minGames,
     inviteList,
   });
-  const [saveDisabled, setSaveDisabled] = useState(true);
   const startDatePickerRef = useRef(null);
   const endDatePickerRef = useRef(null);
+  const formInvalidRef = useRef(true);
 
   useEffect(() => {
-    const formValid = isFormValid(form);
-
-    if (formValid && saveDisabled) {
-      setSaveDisabled(false);
-    } else if (!formValid && !saveDisabled) {
-      setSaveDisabled(true);
-    }
+    formInvalidRef.current = !isFormValid(form);
   }, [form]);
+
+  const buttonDisabled = saveBtnDisabled || formInvalidRef.current;
 
   const now = moment().add(10, 'minute');
   const defaultStartDate = now.clone().add(1, 'hour');
@@ -309,7 +307,7 @@ export const CreateTournamentView: FunctionComponent<
         <ButtonX
           style={{ alignSelf: 'center' }}
           title="SAVE"
-          disabled={saveDisabled}
+          disabled={buttonDisabled}
           onPress={() => {
             onSavePress(form);
           }}
