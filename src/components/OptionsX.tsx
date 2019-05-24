@@ -1,6 +1,6 @@
 import { ViewProps, View, TouchableOpacity, StyleSheet } from 'react-native';
 import React, { FunctionComponent } from 'react';
-import { TextX } from './TextX';
+import { TextX, TextXProps } from './TextX';
 
 export interface OptionsXProps extends ViewProps {
   options: Array<{
@@ -9,11 +9,13 @@ export interface OptionsXProps extends ViewProps {
   }>;
   selectedValue?: any;
   onSelect: (val: any) => void;
+  textProps?: TextXProps;
 }
 export const OptionsX: FunctionComponent<OptionsXProps> = ({
   options,
   selectedValue,
   onSelect,
+  textProps: { style: textStyle, ...textProps } = {},
 }) => {
   return (
     <View style={styles.container}>
@@ -31,7 +33,11 @@ export const OptionsX: FunctionComponent<OptionsXProps> = ({
               onSelect(value);
             }}
           >
-            <TextX style={styles.text} adjustsFontSizeToFit>
+            <TextX
+              style={[styles.text, textStyle]}
+              adjustsFontSizeToFit
+              {...textProps}
+            >
               {name}
             </TextX>
           </TouchableOpacity>

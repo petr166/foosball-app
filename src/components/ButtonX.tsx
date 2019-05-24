@@ -42,7 +42,8 @@ export const ButtonX: FunctionComponent<Props> = ({
 const styles = StyleSheet.create({
   button: {
     padding: 12,
-    width: 220,
+    width: 260,
+    marginHorizontal: 16,
     borderRadius: 1000,
     minHeight: 46,
     justifyContent: 'center',

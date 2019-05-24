@@ -30,10 +30,7 @@ const privacyOptions = [
   },
 ];
 
-const teamSizeOptions = [
-  { name: '1 v 1', value: 1 },
-  { name: '2 v 2', value: 2 },
-];
+const teamSizeOptions = [{ name: '1v1', value: 1 }, { name: '2v2', value: 2 }];
 
 const maxPlayersOptions = [
   { name: '10', value: 10 },
@@ -263,6 +260,7 @@ export const CreateTournamentView: FunctionComponent<
           onSelect={val => {
             setForm(prev => ({ ...prev, teamSize: val }));
           }}
+          textProps={{ style: { textTransform: 'none' } }}
         />
 
         <TextX style={styles.label}>Max number of players</TextX>
