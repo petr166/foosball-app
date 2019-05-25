@@ -2,6 +2,7 @@ import { Platform, Dimensions } from 'react-native';
 import { Navigation } from 'react-native-navigation';
 
 import { LOADING_OVERLAY, BANNER } from '../screens';
+import { ShowBannerProps } from '../screens/Misc/Banner';
 
 export const LOADING_OVERLAY_COMPONENT_ID = 'LOADING_OVERLAY_COMPONENT_ID';
 
@@ -24,8 +25,8 @@ export const getBoxShadowStyles = (options: any = {}) => ({
   elevation: 1,
   shadowColor: '#000',
   shadowOffset: {
-    width: 1,
-    height: 1,
+    width: 0.5,
+    height: 0.5,
   },
   shadowRadius: 2,
   shadowOpacity: 0.3,
@@ -42,7 +43,7 @@ export const showLoadingOverlay = () => {
   };
 };
 
-export const showBanner = async (props: any) => {
+export const showBanner = async (props: ShowBannerProps) => {
   return Navigation.showOverlay({
     component: { name: BANNER, passProps: props },
   });

@@ -65,6 +65,14 @@ export const getNotificationOptions = (type?: NotificationTypeValue) => {
   }
 };
 
+export interface ShowBannerProps {
+  timeout?: number;
+  onPress?: () => void;
+  onDismiss?: () => void;
+  onPressOrDismiss?: () => void;
+  type?: NotificationTypeValue;
+  message?: string;
+}
 export interface BannerProps extends ScreenComponentProps {
   timeout?: number;
   // you can specify onPress & onDismiss as separate actions,
@@ -73,6 +81,7 @@ export interface BannerProps extends ScreenComponentProps {
   onDismiss?: () => void;
   onPressOrDismiss?: () => void;
   type?: NotificationTypeValue;
+  message?: string;
 }
 export class Banner extends React.Component<
   BannerProps,
