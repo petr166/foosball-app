@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0.5,
   },
   buttonSelected: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#E8E8E8',
   },
   name: {
     marginLeft: 8,

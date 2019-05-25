@@ -10,17 +10,22 @@ import {
 } from 'react-native';
 import { Navigation } from 'react-native-navigation';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import pt from 'prop-types';
 import { getNavBarHeight } from '../../utils';
 import { TextX } from '../../components';
 import { colors } from '../../config/styles';
-
-// TODO: refactor in TS
+import { ScreenComponentProps } from '..';
 
 const initialOpacity = 0;
 const navBarHeight = getNavBarHeight();
 
-export const getNotificationOptions = type => {
+type NotificationTypeValue =
+  | 'error'
+  | 'success'
+  | 'warning'
+  | 'information'
+  | 'no-network';
+
+export const getNotificationOptions = (type?: NotificationTypeValue) => {
   switch (type) {
     case 'success': {
       return {
@@ -60,24 +65,19 @@ export const getNotificationOptions = type => {
   }
 };
 
-export class Banner extends React.Component {
-  static propTypes = {
-    componentId: pt.string.isRequired,
-    timeout: pt.number,
-    // you can specify onPress & onDismiss as separate actions,
-    // or use onPressOrDismiss to trigger an action
-    onPress: pt.func,
-    onDismiss: pt.func,
-    onPressOrDismiss: pt.func,
-    type: pt.oneOf([
-      'error',
-      'success',
-      'warning',
-      'information',
-      'no-network',
-    ]),
-  };
-
+export interface BannerProps extends ScreenComponentProps {
+  timeout?: number;
+  // you can specify onPress & onDismiss as separate actions,
+  // or use onPressOrDismiss to trigger an action
+  onPress?: () => void;
+  onDismiss?: () => void;
+  onPressOrDismiss?: () => void;
+  type?: NotificationTypeValue;
+}
+export class Banner extends React.Component<
+  BannerProps,
+  { animatedPosition: Animated.Value }
+> {
   static defaultProps = {
     timeout: 3500,
     type: 'error',
@@ -91,7 +91,10 @@ export class Banner extends React.Component {
     };
   }
 
-  constructor(props) {
+  appearAnimation: any;
+  disappearAnimation: any;
+
+  constructor(props: BannerProps) {
     super(props);
     this.state = {
       animatedPosition: new Animated.Value(initialOpacity),
@@ -102,7 +105,7 @@ export class Banner extends React.Component {
   }
 
   componentDidAppear() {
-    const { timeout } = this.props;
+    const { timeout = 0 } = this.props;
 
     this.appearAnimation = Animated.timing(this.state.animatedPosition, {
       toValue: 1,
@@ -116,7 +119,7 @@ export class Banner extends React.Component {
     });
   }
 
-  dismissNotification = (delay = 0, onPress) => {
+  dismissNotification = (delay = 0, onPress?: () => void) => {
     const {
       componentId,
       onDismiss: rawOnDismiss,
@@ -135,7 +138,7 @@ export class Banner extends React.Component {
       useNativeDriver: true,
     });
 
-    this.disappearAnimation.start(({ finished }) => {
+    this.disappearAnimation.start(({ finished }: { finished: boolean }) => {
       if (finished) {
         !onPressOrDismiss && onPress && onPress();
         Navigation.dismissOverlay(componentId)
