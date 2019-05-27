@@ -2,11 +2,11 @@ import { ViewProps, StyleSheet, View, ActivityIndicator } from 'react-native';
 import React, { FunctionComponent } from 'react';
 
 export interface ListLoadingFooterProps extends ViewProps {}
-export const ListLoadingFooter: FunctionComponent<
-  ListLoadingFooterProps
-> = () => {
+export const ListLoadingFooter: FunctionComponent<ListLoadingFooterProps> = ({
+  style,
+}) => {
   return (
-    <View style={styles.loadingContainer}>
+    <View style={[styles.loadingContainer, style]}>
       <ActivityIndicator />
     </View>
   );
@@ -14,7 +14,8 @@ export const ListLoadingFooter: FunctionComponent<
 
 const styles = StyleSheet.create({
   loadingContainer: {
-    marginVertical: 30,
+    minWidth: 160,
+    minHeight: 160,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',

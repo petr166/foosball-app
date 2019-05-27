@@ -126,6 +126,7 @@ export const InviteParticipants: IScreenComponent<InviteParticipantsProps> = ({
         contentContainerStyle={{ flexGrow: 1 }}
         stickyHeaderIndices={[0]}
         keyboardShouldPersistTaps="always"
+        keyboardDismissMode="on-drag"
         ListHeaderComponent={
           <View style={{ backgroundColor: '#fff' }}>
             <SearchBar
@@ -137,11 +138,11 @@ export const InviteParticipants: IScreenComponent<InviteParticipantsProps> = ({
                     first: firstToLoad,
                     term: val,
                   }).finally(() => {
-                    if (listRef.current) {
-                      setTimeout(() => {
+                    setTimeout(() => {
+                      if (listRef.current) {
                         listRef.current.scrollToOffset({ offset: 0 });
-                      }, 100);
-                    }
+                      }
+                    }, 100);
                     termRef.current = val;
                   });
                 }
@@ -155,7 +156,6 @@ export const InviteParticipants: IScreenComponent<InviteParticipantsProps> = ({
           if (!shouldLoadMore.current && !loading) {
             shouldLoadMore.current = true;
           }
-          Keyboard.dismiss();
         }}
         onEndReachedThreshold={0.3}
         onEndReached={() => {
@@ -166,7 +166,7 @@ export const InviteParticipants: IScreenComponent<InviteParticipantsProps> = ({
                 mergeWithConcat(prev, fetchMoreResult),
             });
 
-            if (shouldLoadMore.current) shouldLoadMore.current = false;
+            shouldLoadMore.current = false;
           }
         }}
         keyExtractor={listKeyExtractor}

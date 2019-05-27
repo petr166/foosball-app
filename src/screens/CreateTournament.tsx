@@ -27,9 +27,12 @@ const CREATE_TOURNAMENT = gql`
   }
 `;
 
-export interface TournamentsProps extends ScreenComponentProps {}
+export interface TournamentsProps extends ScreenComponentProps {
+  onSuccess?: () => void;
+}
 export const CreateTournament: IScreenComponent<TournamentsProps> = ({
   componentId,
+  onSuccess,
 }) => {
   const createTournamentReq = useMutation(CREATE_TOURNAMENT);
   const [, setLoading, error, , disableButton] = useLoading(false);
@@ -84,8 +87,10 @@ export const CreateTournament: IScreenComponent<TournamentsProps> = ({
         })
           .then(() => {
             Navigation.dismissModal(componentId).finally(() => {
-              showBanner({ type: 'success' });
+              showBanner({ type: 'success', message: 'Tournament created' });
+              return true;
             });
+            !!onSuccess && onSuccess();
           })
           .catch(err => {
             setLoading(false, err);

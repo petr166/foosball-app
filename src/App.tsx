@@ -1,5 +1,8 @@
 import { Navigation } from 'react-native-navigation';
 import Icon, { FA5Style } from 'react-native-vector-icons/FontAwesome5';
+import { addCallback } from 'reactn';
+import { UIManager } from 'react-native';
+import Promise from 'bluebird';
 
 import {
   registerAppScreens,
@@ -12,9 +15,9 @@ import {
 } from './screens';
 import { initApolloClient } from './apollo';
 import { initGlobal, ROOT, IGlobalState } from './global';
-import { addCallback } from 'reactn';
 import { BOTTOM_TAB_ICON_SIZE, colors } from './config/styles';
-import { UIManager } from 'react-native';
+
+global.Promise = Promise;
 
 // activate LayoutAnimation on android
 UIManager.setLayoutAnimationEnabledExperimental &&

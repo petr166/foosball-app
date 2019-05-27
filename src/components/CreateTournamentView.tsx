@@ -85,13 +85,8 @@ export const CreateTournamentView: FunctionComponent<
   });
   const startDatePickerRef = useRef(null);
   const endDatePickerRef = useRef(null);
-  const formInvalidRef = useRef(true);
 
-  useEffect(() => {
-    formInvalidRef.current = !isFormValid(form);
-  }, [form]);
-
-  const buttonDisabled = saveBtnDisabled || formInvalidRef.current;
+  const buttonDisabled = saveBtnDisabled || !isFormValid(form);
 
   const now = moment().add(10, 'minute');
   const defaultStartDate = now.clone().add(1, 'hour');

@@ -11,3 +11,5 @@ export * from './SearchBar';
 export * from './ListLoadingFooter';
 export * from './UserItem';
 export * from './ListEmpty';
+export * from './TournamentList';
+export * from './TournamentItem';
