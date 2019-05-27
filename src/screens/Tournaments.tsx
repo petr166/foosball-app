@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { ImageURISource } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { ImageURISource, RefreshControl } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Options, Navigation } from 'react-native-navigation';
 import { gql } from 'apollo-boost';
@@ -49,11 +49,19 @@ const GET_TOURNAMENTS = gql`
   ${TournamentItemFragment}
 `;
 
+type GetTournamentsVariables = {
+  first?: number;
+  cursor: number;
+  term?: string;
+  category?: 'mine' | 'public' | 'private' | 'old';
+};
+
 const initialCursor = 0;
 
 export interface TournamentsProps extends ScreenComponentProps {}
 export const Tournaments: IScreenComponent<TournamentsProps> = () => {
   const termRef = useRef('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
   useNavBtnPress(() => {
     Navigation.showModal({
       stack: {
@@ -85,12 +93,7 @@ export const Tournaments: IScreenComponent<TournamentsProps> = () => {
     refetch: mineRefetch,
   } = useQuery<
     { tournaments: PaginatedDocument<ITournamentItem> },
-    {
-      first: number;
-      cursor: number;
-      term?: string;
-      category?: 'mine' | 'public' | 'private';
-    }
+    GetTournamentsVariables
   >(GET_TOURNAMENTS, {
     variables: { first: 5, cursor: initialCursor, category: 'mine' },
     notifyOnNetworkStatusChange: true,
@@ -102,12 +105,64 @@ export const Tournaments: IScreenComponent<TournamentsProps> = () => {
     setShowMineSpinner(mineLoading);
   }, [mineLoading]);
 
+  const {
+    data: {
+      tournaments: {
+        edges: publicEges = [],
+        pageInfo: { hasNextPage: publicHasNextPage = false } = {},
+      } = {},
+    } = {},
+    error: publicError,
+    loading: publicLoading,
+    fetchMore: publicFetchMore,
+    refetch: publicRefetch,
+  } = useQuery<
+    { tournaments: PaginatedDocument<ITournamentItem> },
+    GetTournamentsVariables
+  >(GET_TOURNAMENTS, {
+    variables: { first: 5, cursor: initialCursor, category: 'public' },
+    notifyOnNetworkStatusChange: true,
+  });
+  const [showPublicSpinner, setShowPublicSpinner] = useLoading(publicLoading);
+  const publicListRef = useRef<any>(null);
+
+  useEffect(() => {
+    setShowPublicSpinner(publicLoading);
+  }, [publicLoading]);
+
+  const {
+    data: {
+      tournaments: {
+        edges: oldEges = [],
+        pageInfo: { hasNextPage: oldHasNextPage = false } = {},
+      } = {},
+    } = {},
+    error: oldError,
+    loading: oldLoading,
+    fetchMore: oldFetchMore,
+    refetch: oldRefetch,
+  } = useQuery<
+    { tournaments: PaginatedDocument<ITournamentItem> },
+    GetTournamentsVariables
+  >(GET_TOURNAMENTS, {
+    variables: { first: 5, cursor: initialCursor, category: 'old' },
+    notifyOnNetworkStatusChange: true,
+  });
+  const [showOldSpinner, setShowOldSpinner] = useLoading(oldLoading);
+  const oldListRef = useRef<any>(null);
+
+  useEffect(() => {
+    setShowOldSpinner(oldLoading);
+  }, [oldLoading]);
+
   const mineList = mineEges.map(v => v.node);
+  const publicList = publicEges.map(v => v.node);
+  const oldList = oldEges.map(v => v.node);
 
   const doSearch = (val: string) => {
-    const listRefs = [mineListRef];
+    const listRefs = [mineListRef, publicListRef, oldListRef];
 
-    Promise.map([mineRefetch], (refetchFn, i) => {
+    Promise.map([mineRefetch, publicRefetch, oldRefetch], (refetchFn, i) => {
       return refetchFn({
         cursor: initialCursor,
         first: 5,
@@ -128,8 +183,21 @@ export const Tournaments: IScreenComponent<TournamentsProps> = () => {
 
   return (
     <ScreenContainer
+      contentContainerStyle={{ paddingBottom: 60 }}
       keyboardShouldPersistTaps="always"
       keyboardDismissMode="on-drag"
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={() => {
+            setIsRefreshing(true);
+            doSearch(termRef.current);
+            setTimeout(() => {
+              setIsRefreshing(false);
+            }, 600);
+          }}
+        />
+      }
     >
       <SearchBar
         onChangeText={debounce((rawVal: string) => {
@@ -150,8 +218,6 @@ export const Tournaments: IScreenComponent<TournamentsProps> = () => {
         onTryAgain={() => {
           mineRefetch({
             cursor: initialCursor,
-            first: 5,
-            category: 'mine',
           });
         }}
         loadMore={() => {
@@ -165,7 +231,51 @@ export const Tournaments: IScreenComponent<TournamentsProps> = () => {
         }}
       />
 
-      <TournamentList title="Public tournaments" data={[]} />
+      <TournamentList
+        title="Public tournaments"
+        refSet={publicListRef}
+        data={publicList}
+        showSpinner={showPublicSpinner}
+        isLoading={publicLoading}
+        error={publicError ? parseError(publicError).message : undefined}
+        onTryAgain={() => {
+          publicRefetch({
+            cursor: initialCursor,
+          });
+        }}
+        loadMore={() => {
+          if (publicHasNextPage && !publicLoading) {
+            publicFetchMore({
+              variables: { cursor: publicEges.length },
+              updateQuery: (prev, { fetchMoreResult }) =>
+                mergeWithConcat(prev, fetchMoreResult, 'node.id'),
+            });
+          }
+        }}
+      />
+
+      <TournamentList
+        title="Old tournaments"
+        refSet={oldListRef}
+        data={oldList}
+        showSpinner={showOldSpinner}
+        isLoading={oldLoading}
+        error={oldError ? parseError(oldError).message : undefined}
+        onTryAgain={() => {
+          oldRefetch({
+            cursor: initialCursor,
+          });
+        }}
+        loadMore={() => {
+          if (oldHasNextPage && !oldLoading) {
+            oldFetchMore({
+              variables: { cursor: oldEges.length },
+              updateQuery: (prev, { fetchMoreResult }) =>
+                mergeWithConcat(prev, fetchMoreResult, 'node.id'),
+            });
+          }
+        }}
+      />
     </ScreenContainer>
   );
 };

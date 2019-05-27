@@ -86,11 +86,13 @@ export const CreateTournament: IScreenComponent<TournamentsProps> = ({
           },
         })
           .then(() => {
-            Navigation.dismissModal(componentId).finally(() => {
-              showBanner({ type: 'success', message: 'Tournament created' });
-              return true;
-            });
             !!onSuccess && onSuccess();
+            return Navigation.dismissModal(componentId)
+              .then(() => true)
+              .finally(() => {
+                showBanner({ type: 'success', message: 'Tournament created' });
+                return true;
+              });
           })
           .catch(err => {
             setLoading(false, err);
