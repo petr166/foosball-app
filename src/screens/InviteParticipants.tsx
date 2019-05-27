@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 
 import { ScreenComponentProps, IScreenComponent } from './index';
-import SearchBar from '../components/SearchBar';
 import { UserFragment, IUser } from '../fragments';
 import { useQuery } from 'react-apollo-hooks';
 import {
@@ -19,6 +18,7 @@ import {
   ListLoadingFooter,
   USER_ITEM_HEIGHT,
   ListEmpty,
+  SearchBar,
 } from '../components';
 import { PaginatedDocument } from '../interfaces';
 import {

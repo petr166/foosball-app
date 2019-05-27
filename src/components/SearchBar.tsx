@@ -22,7 +22,10 @@ export interface SearchBarProps {
   placeholder?: string;
   refSet?: (ref: any) => void;
 }
-class SearchBar extends React.Component<SearchBarProps, { isActive: boolean }> {
+export class SearchBar extends React.Component<
+  SearchBarProps,
+  { isActive: boolean }
+> {
   static defaultProps = {
     placeholder: 'Search',
     isActive: false,
@@ -144,5 +147,3 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
 });
-
-export default SearchBar;
