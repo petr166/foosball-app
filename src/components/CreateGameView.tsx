@@ -21,15 +21,25 @@ import { ITournamentForGame, IUser } from '../fragments';
 import { IGlobalState } from '../global';
 import { Avatar } from './Avatar';
 import { separateName, listKeyExtractor } from '../utils';
-
-const requiredFields = ['name', 'startDate', 'endDate'];
-const isFormValid = (form: any) => {
-  return !requiredFields.find(reqField => !form[reqField]);
-};
+import { TextInput } from 'react-native-gesture-handler';
 
 const defaultStartDate = moment()
   .subtract(1, 'day')
   .unix();
+
+const isFormValid = (form: any, { teamSize }: { teamSize: number }) => {
+  if (
+    form.team1.length !== teamSize ||
+    form.team2.length !== teamSize ||
+    !!form.team1.find((v: any) => !v) ||
+    !!form.team2.find((v: any) => !v) ||
+    Number(form.score1) === Number(form.score2)
+  ) {
+    return false;
+  }
+
+  return true;
+};
 
 export interface CreateGameViewProps extends ViewProps {
   tournament: ITournamentForGame;
@@ -48,12 +58,17 @@ export const CreateGameView: FunctionComponent<CreateGameViewProps> = ({
     time: now.toJSON(),
     team1: [currentUser.id],
     team2: [],
+    score1: '0',
+    score2: '0',
   });
   const [activeChoose, setActiveChoose] = useState<{
     team: 'team1' | 'team2';
     index: number;
   }>();
-  const gameTimePickerRef = useRef(null);
+  const gameTimePickerRef = useRef<any>(null);
+  const score1InputRef = useRef<any>(null);
+  const score2InputRef = useRef<any>(null);
+  const [, setPleaseUpdate] = useState(false);
 
   useEffect(() => {
     setForm(prev => ({ ...prev, teamSize }));
@@ -111,9 +126,27 @@ export const CreateGameView: FunctionComponent<CreateGameViewProps> = ({
       .map(vv => vv.user);
   }
 
-  const buttonDisabled = saveBtnDisabled || !isFormValid(form);
+  const buttonDisabled =
+    saveBtnDisabled || !isFormValid(form, { teamSize: teamSize });
   const avatarSize =
     (Dimensions.get('window').width - 50) / (teamSize * (teamSize > 1 ? 3 : 4));
+  const scoreInputSize = (60 * (Dimensions.get('window').width - 32)) / 100 / 2;
+
+  const handleScoreChange = (name: 'score1' | 'score2') => (text: string) => {
+    let scoreToSet = 0;
+    let newScore = Number(text);
+
+    if (newScore && newScore < 100) {
+      scoreToSet = newScore;
+    }
+
+    setForm(prev => ({ ...prev, [name]: String(scoreToSet) }));
+    if (name === 'score1') {
+      score2InputRef.current && score2InputRef.current.focus();
+    } else {
+      score2InputRef.current && score2InputRef.current.blur();
+    }
+  };
 
   const renderPlayerItem = (teamName: 'team1' | 'team2') => (
     // @ts-ignore 2739
@@ -220,7 +253,7 @@ export const CreateGameView: FunctionComponent<CreateGameViewProps> = ({
         {!!activeChoose && (
           <View>
             <FlatList
-              contentContainerStyle={{ marginBottom: 26 }}
+              contentContainerStyle={{ paddingTop: 26 }}
               keyExtractor={listKeyExtractor}
               data={userListData}
               renderItem={({ item, index }) => (
@@ -255,8 +288,75 @@ export const CreateGameView: FunctionComponent<CreateGameViewProps> = ({
           </View>
         )}
 
+        <TextX style={[styles.label, { marginBottom: 14 }]}>Score</TextX>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <View>
+            <TextInput
+              ref={score1InputRef}
+              style={[
+                styles.scoreInput,
+                {
+                  width: scoreInputSize,
+                  height: scoreInputSize + 10,
+                  fontSize: scoreInputSize / 2.2,
+                },
+                score1InputRef.current &&
+                  score1InputRef.current.isFocused() && {
+                    borderColor: colors.secondary,
+                  },
+              ]}
+              keyboardType="numeric"
+              autoCorrect={false}
+              selectionColor="#000"
+              value={form.score1}
+              onChangeText={handleScoreChange('score1')}
+              onFocus={() => {
+                setPleaseUpdate(prev => !prev);
+              }}
+              onBlur={() => {
+                setPleaseUpdate(prev => !prev);
+              }}
+            />
+          </View>
+          <TextX style={{ fontSize: 40 }}>:</TextX>
+          <View>
+            <TextInput
+              ref={score2InputRef}
+              style={[
+                styles.scoreInput,
+                {
+                  width: scoreInputSize,
+                  height: scoreInputSize + 10,
+                  fontSize: scoreInputSize / 2.2,
+                },
+                score2InputRef.current &&
+                  score2InputRef.current.isFocused() && {
+                    borderColor: colors.secondary,
+                  },
+              ]}
+              keyboardType="numeric"
+              autoCorrect={false}
+              selectionColor="#000"
+              value={form.score2}
+              onChangeText={handleScoreChange('score2')}
+              onFocus={() => {
+                setPleaseUpdate(prev => !prev);
+              }}
+              onBlur={() => {
+                setPleaseUpdate(prev => !prev);
+              }}
+            />
+          </View>
+        </View>
+
         <ButtonX
-          style={{ alignSelf: 'center' }}
+          style={{ alignSelf: 'center', marginTop: 40 }}
           title="SAVE"
           disabled={buttonDisabled}
           onPress={() => {
@@ -293,7 +393,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    marginBottom: 26,
   },
   userListItem: {
     flexDirection: 'row',
@@ -301,5 +400,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderBottomWidth: 1,
+  },
+  scoreInput: {
+    borderWidth: 3,
+    marginHorizontal: 10,
+    borderRadius: 12,
+    textAlign: 'center',
+    fontWeight: '600',
   },
 });
