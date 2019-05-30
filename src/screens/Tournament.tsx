@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { Options } from 'react-native-navigation';
 import { TabView, TabBar } from 'react-native-tab-view';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { TextX, ImageX, TournamentStandings } from '../components';
 import { IScreenComponent, ScreenComponentProps } from './index';
 import { colors } from '../config/styles';
 import { ITournamentItem } from '../fragments';
 import defaultCoverImg from '../assets/tournament-cover.jpg';
-import { getTournamentTimeString } from '../utils';
+import { getTournamentTimeString, getBoxShadowStyles } from '../utils';
 
 // TODO: remove
 const FirstRoute = () => <View style={[{ flex: 1 }]} />;
@@ -48,7 +49,7 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
   };
 
   return (
-    <React.Fragment>
+    <View style={{ flex: 1 }}>
       <View style={styles.headerContainer}>
         <View style={styles.coverContainer}>
           <ImageX
@@ -84,7 +85,18 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
           />
         )}
       />
-    </React.Fragment>
+
+      <TouchableOpacity
+        style={styles.addGameButton}
+        onPress={() => {
+          console.log('====================================');
+          console.log('add game pressed');
+          console.log('====================================');
+        }}
+      >
+        <Icon name="plus" size={30} color="#fff" />
+      </TouchableOpacity>
+    </View>
   );
 };
 
@@ -116,4 +128,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   text: { color: '#fff', fontSize: 17 },
+  addGameButton: {
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+    backgroundColor: colors.primary,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...getBoxShadowStyles(),
+  },
 });
