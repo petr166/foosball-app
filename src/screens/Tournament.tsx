@@ -1,32 +1,51 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useGlobal } from 'reactn';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import React, { useState } from 'react';
 import { Options } from 'react-native-navigation';
-import { gql } from 'apollo-boost';
-import { useQuery } from 'react-apollo-hooks';
+import { TabView, TabBar } from 'react-native-tab-view';
+import { View, StyleSheet, Dimensions } from 'react-native';
 
-import { ProfileView, TextX, ImageX } from '../components';
+import { TextX, ImageX, TournamentStandings } from '../components';
 import { IScreenComponent, ScreenComponentProps } from './index';
-import { IGlobalState } from '../global';
-import { ImageURISource, View, StyleSheet } from 'react-native';
-import { useNavBtnPress } from '../hooks';
-import { TOP_BAR_ICON_SIZE } from '../config/styles';
-import {
-  UserProfileFragment,
-  GameFragment,
-  ITournamentItem,
-} from '../fragments';
-import { mergeWith, isArray } from 'lodash';
+import { colors } from '../config/styles';
+import { ITournamentItem } from '../fragments';
 import defaultCoverImg from '../assets/tournament-cover.jpg';
 import { getTournamentTimeString } from '../utils';
+
+// TODO: remove
+const FirstRoute = () => <View style={[{ flex: 1 }]} />;
 
 export interface TournamentProps extends ScreenComponentProps {
   tournament: ITournamentItem;
 }
 export const Tournament: IScreenComponent<TournamentProps> = ({
   tournament: { name, cover, startDate, endDate },
+  tournament,
 }) => {
+  const [tabState, setTabState] = useState({
+    index: 0,
+    routes: [
+      {
+        key: 'standings',
+        title: 'Standings',
+        accessibilityLabel: 'Standings',
+      },
+      { key: 'games', title: 'Games', accessibilityLabel: 'Games' },
+      { key: 'you', title: 'You', accessibilityLabel: 'You' },
+    ],
+  });
   const timeStr = getTournamentTimeString({ startDate, endDate });
+
+  const renderScene = ({ route }: any) => {
+    switch (route.key) {
+      case 'standings':
+        return <TournamentStandings tournament={tournament} />;
+      case 'games':
+        return <FirstRoute />;
+      case 'you':
+        return <FirstRoute />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <React.Fragment>
@@ -49,6 +68,22 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
           <TextX style={styles.text}>{timeStr}</TextX>
         </View>
       </View>
+
+      <TabView
+        lazy
+        navigationState={tabState}
+        renderScene={renderScene}
+        onIndexChange={index => setTabState(prev => ({ ...prev, index }))}
+        initialLayout={{ width: Dimensions.get('window').width }}
+        renderTabBar={props => (
+          <TabBar
+            {...props}
+            indicatorStyle={{ backgroundColor: colors.secondary }}
+            style={{ backgroundColor: '#fff' }}
+            labelStyle={{ color: '#000' }}
+          />
+        )}
+      />
     </React.Fragment>
   );
 };
