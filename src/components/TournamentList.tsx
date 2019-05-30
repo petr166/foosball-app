@@ -29,6 +29,7 @@ export const TournamentList: FunctionComponent<TournamentListProps> = ({
   error,
   onTryAgain,
   refSet = null,
+  onItemPress,
 }) => {
   const shouldLoadMore = useRef(false);
 
@@ -88,7 +89,14 @@ export const TournamentList: FunctionComponent<TournamentListProps> = ({
           }}
           keyExtractor={listKeyExtractor}
           data={data}
-          renderItem={({ item }) => <TournamentItem tournament={item} />}
+          renderItem={({ item }) => (
+            <TournamentItem
+              tournament={item}
+              onPress={() => {
+                onItemPress && onItemPress(item);
+              }}
+            />
+          )}
         />
       )}
     </View>

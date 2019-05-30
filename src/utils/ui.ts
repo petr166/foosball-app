@@ -1,5 +1,6 @@
 import { Platform, Dimensions } from 'react-native';
 import { Navigation } from 'react-native-navigation';
+import moment from 'moment';
 
 import { LOADING_OVERLAY, BANNER } from '../screens';
 import { ShowBannerProps } from '../screens/Misc/Banner';
@@ -51,4 +52,26 @@ export const showBanner = async (props: ShowBannerProps) => {
 
 export const listKeyExtractor = (item: any) => {
   return item.id;
+};
+
+export const getTournamentTimeString = ({
+  startDate,
+  endDate,
+}: {
+  startDate: string;
+  endDate: string;
+}) => {
+  let timeStr = '';
+  const now = moment();
+  const start = moment(Number(startDate));
+  const end = moment(Number(endDate));
+  if (now.isBefore(start)) {
+    timeStr = 'starts ' + start.fromNow();
+  } else if (now.isBefore(end)) {
+    timeStr = 'ends ' + end.fromNow();
+  } else {
+    timeStr = 'ended on ' + end.format('DD/MM');
+  }
+
+  return timeStr;
 };

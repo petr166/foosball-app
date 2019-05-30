@@ -10,7 +10,7 @@ import { ScreenContainer, TournamentList, SearchBar } from '../components';
 import { IScreenComponent, ScreenComponentProps } from './index';
 import { TOP_BAR_ICON_SIZE } from '../config/styles';
 import { useNavBtnPress, useLoading } from '../hooks';
-import { CREATE_TOURNAMENT } from './screenNames';
+import { CREATE_TOURNAMENT, TOURNAMENT } from './screenNames';
 import { TournamentItemFragment, ITournamentItem } from '../fragments';
 import { PaginatedDocument } from '../interfaces';
 import { parseError, mergeWithConcat } from '../utils';
@@ -59,7 +59,9 @@ type GetTournamentsVariables = {
 const initialCursor = 0;
 
 export interface TournamentsProps extends ScreenComponentProps {}
-export const Tournaments: IScreenComponent<TournamentsProps> = () => {
+export const Tournaments: IScreenComponent<TournamentsProps> = ({
+  componentId,
+}) => {
   const termRef = useRef('');
   const [isRefreshing, setIsRefreshing] = useState(false);
   useNavBtnPress(() => {
@@ -212,6 +214,11 @@ export const Tournaments: IScreenComponent<TournamentsProps> = () => {
         title="Your tournaments"
         refSet={mineListRef}
         data={mineList}
+        onItemPress={item => {
+          Navigation.push(componentId, {
+            component: { name: TOURNAMENT, passProps: { tournament: item } },
+          });
+        }}
         showSpinner={showMineSpinner}
         isLoading={mineLoading}
         error={mineError ? parseError(mineError).message : undefined}
@@ -235,6 +242,11 @@ export const Tournaments: IScreenComponent<TournamentsProps> = () => {
         title="Public tournaments"
         refSet={publicListRef}
         data={publicList}
+        onItemPress={item => {
+          Navigation.push(componentId, {
+            component: { name: TOURNAMENT, passProps: { tournament: item } },
+          });
+        }}
         showSpinner={showPublicSpinner}
         isLoading={publicLoading}
         error={publicError ? parseError(publicError).message : undefined}
@@ -258,6 +270,11 @@ export const Tournaments: IScreenComponent<TournamentsProps> = () => {
         title="Old tournaments"
         refSet={oldListRef}
         data={oldList}
+        onItemPress={item => {
+          Navigation.push(componentId, {
+            component: { name: TOURNAMENT, passProps: { tournament: item } },
+          });
+        }}
         showSpinner={showOldSpinner}
         isLoading={oldLoading}
         error={oldError ? parseError(oldError).message : undefined}

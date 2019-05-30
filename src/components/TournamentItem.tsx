@@ -10,7 +10,7 @@ import moment from 'moment';
 
 import { ITournamentItem } from '../fragments';
 import { TextX } from './TextX';
-import { getBoxShadowStyles } from '../utils';
+import { getBoxShadowStyles, getTournamentTimeString } from '../utils';
 import { ImageX } from './ImageX';
 import defaultCoverImg from '../assets/tournament-cover.jpg';
 
@@ -26,17 +26,7 @@ export const TournamentItem: FunctionComponent<TournamentItemProps> = ({
   style,
   ...props
 }) => {
-  let timeStr = '';
-  const now = moment();
-  const start = moment(Number(startDate));
-  const end = moment(Number(endDate));
-  if (now.isBefore(start)) {
-    timeStr = 'starts ' + start.fromNow();
-  } else if (now.isBefore(end)) {
-    timeStr = 'ends ' + end.fromNow();
-  } else {
-    timeStr = 'ended on ' + end.format('DD/MM');
-  }
+  const timeStr = getTournamentTimeString({ startDate, endDate });
 
   return (
     <TouchableOpacity style={styles.button} {...props}>

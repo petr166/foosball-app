@@ -16,6 +16,7 @@ import { CreateTournament } from './CreateTournament';
 import { Loading } from './Misc/Loading';
 import { Banner } from './Misc/Banner';
 import { InviteParticipants } from './InviteParticipants';
+import { Tournament } from './Tournament';
 
 export interface IScreenComponent<P> extends FunctionComponent<P> {
   options?: Options | ((props?: any) => Options);
@@ -26,7 +27,7 @@ export interface ScreenComponentProps {
 
 const registerScreen = (
   name: string,
-  ComponentX: IScreenComponent<ScreenComponentProps>,
+  ComponentX: IScreenComponent<any>,
   apolloClient: ApolloClient<any>
 ) => {
   Navigation.registerComponent(
@@ -56,4 +57,5 @@ export const registerAppScreens = (apolloClient: ApolloClient<any>) => {
     InviteParticipants,
     apolloClient
   );
+  registerScreen(screenNames.TOURNAMENT, Tournament, apolloClient);
 };
