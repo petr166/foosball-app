@@ -47,18 +47,20 @@ export const ImageX: FunctionComponent<ImageXProps> = ({
   showSpinnerRef.current = showSpinner;
 
   useEffect(() => {
-    setShowSpinner(true);
+    if (!isDefaultImg) {
+      setShowSpinner(true);
 
-    const failTimeout = window.setTimeout(() => {
-      setFailed((prevFailed: boolean) => {
-        if (!prevFailed && showSpinnerRef.current) return true;
-        return prevFailed;
-      });
-    }, 5000);
+      const failTimeout = window.setTimeout(() => {
+        setFailed((prevFailed: boolean) => {
+          if (!prevFailed && showSpinnerRef.current) return true;
+          return prevFailed;
+        });
+      }, 5000);
 
-    return () => {
-      if (failTimeout) clearTimeout(failTimeout);
-    };
+      return () => {
+        clearTimeout(failTimeout);
+      };
+    }
   }, []);
 
   let containerDimensions: ViewStyle = {};

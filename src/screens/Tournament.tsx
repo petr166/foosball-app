@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Options } from 'react-native-navigation';
+import React, { useState, useEffect } from 'react';
+import { Options, Navigation } from 'react-native-navigation';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -10,6 +10,7 @@ import { colors } from '../config/styles';
 import { ITournamentItem } from '../fragments';
 import defaultCoverImg from '../assets/tournament-cover.jpg';
 import { getTournamentTimeString, getBoxShadowStyles } from '../utils';
+import { CREATE_GAME } from './screenNames';
 
 // TODO: remove
 const FirstRoute = () => <View style={[{ flex: 1 }]} />;
@@ -34,6 +35,25 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
     ],
   });
   const timeStr = getTournamentTimeString({ startDate, endDate });
+
+  useEffect(() => {
+    setTimeout(() => {
+      Navigation.showModal({
+        stack: {
+          children: [
+            {
+              component: {
+                name: CREATE_GAME,
+                passProps: {
+                  tournament,
+                },
+              },
+            },
+          ],
+        },
+      });
+    }, 1000);
+  }, []);
 
   const renderScene = ({ route }: any) => {
     switch (route.key) {
@@ -89,9 +109,20 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
       <TouchableOpacity
         style={styles.addGameButton}
         onPress={() => {
-          console.log('====================================');
-          console.log('add game pressed');
-          console.log('====================================');
+          Navigation.showModal({
+            stack: {
+              children: [
+                {
+                  component: {
+                    name: CREATE_GAME,
+                    passProps: {
+                      tournament,
+                    },
+                  },
+                },
+              ],
+            },
+          });
         }}
       >
         <Icon name="plus" size={30} color="#fff" />

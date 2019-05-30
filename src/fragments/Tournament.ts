@@ -29,6 +29,20 @@ export const StandingFragment = gql`
   ${UserFragment}
 `;
 
+export const TournamentForGameFragment = gql`
+  fragment TournamentForGameFragment on Tournament {
+    teamSize
+    startDate
+    standings {
+      user {
+        ...UserFragment
+      }
+    }
+  }
+
+  ${UserFragment}
+`;
+
 export interface ITournamentItem {
   id: string;
   name: string;
@@ -44,4 +58,12 @@ export interface IStanding {
   won: number;
   played: number;
   points: number;
+}
+
+export interface ITournamentForGame {
+  teamSize: number;
+  startDate: string;
+  standings: Array<{
+    user: IUser;
+  }>;
 }

@@ -157,6 +157,18 @@ export const Tournaments: IScreenComponent<TournamentsProps> = ({
     setShowOldSpinner(oldLoading);
   }, [oldLoading]);
 
+  // TODO: REMOVE
+  useEffect(() => {
+    Navigation.push(componentId, {
+      component: {
+        name: TOURNAMENT,
+        passProps: {
+          tournament: { id: '5cebd6efb52f0c1a923c5a1c', name: 'My Favorite' },
+        },
+      },
+    });
+  }, []);
+
   const mineList = mineEges.map(v => v.node);
   const publicList = publicEges.map(v => v.node);
   const oldList = oldEges.map(v => v.node);
