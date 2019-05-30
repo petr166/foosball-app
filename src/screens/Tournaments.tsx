@@ -221,7 +221,7 @@ export const Tournaments: IScreenComponent<TournamentsProps> = ({
         }}
         showSpinner={showMineSpinner}
         isLoading={mineLoading}
-        error={mineError ? parseError(mineError).message : undefined}
+        error={mineError ? parseError(mineError).text : undefined}
         onTryAgain={() => {
           mineRefetch({
             cursor: initialCursor,
