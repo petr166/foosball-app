@@ -15,7 +15,8 @@ import {
 } from './screens';
 import { initApolloClient } from './apollo';
 import { initGlobal, ROOT, IGlobalState } from './global';
-import { BOTTOM_TAB_ICON_SIZE, colors } from './config/styles';
+import { BOTTOM_TAB_ICON_SIZE } from './config/styles';
+import { defaultNavOptions } from './config/defaultNavOptions';
 
 global.Promise = Promise;
 
@@ -54,32 +55,7 @@ const startApp = async (root: ROOT) => {
   console.log('START APP:', root);
   oldRoot = root;
 
-  Navigation.setDefaultOptions({
-    topBar: {
-      animate: true,
-      // @ts-ignore 2322
-      leftButtonColor: '#000',
-      rightButtonColor: '#000',
-      alignment: 'center',
-      title: {
-        alignment: 'center',
-        color: '#000',
-      },
-      backButton: {
-        color: '#000',
-        title: '',
-        showTitle: false,
-      },
-    },
-    bottomTabs: {
-      animate: true,
-      titleDisplayMode: 'alwaysShow',
-      currentTabIndex: 0, // TODO: dev remove
-    },
-    bottomTab: {
-      selectedIconColor: colors.primary,
-    },
-  });
+  Navigation.setDefaultOptions(defaultNavOptions);
 
   switch (root) {
     case ROOT.REGISTER:
