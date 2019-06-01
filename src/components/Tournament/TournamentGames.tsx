@@ -146,7 +146,7 @@ export const TournamentGames: FunctionComponent<TournamentGamesProps> = ({
         }}
         keyExtractor={listKeyExtractor}
         data={edges.map(v => v.node)}
-        renderItem={({ item }) => <Game game={item} />}
+        renderItem={({ item }) => <Game game={item} showTournament={false} />}
       />
     </View>
   );

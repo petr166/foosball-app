@@ -13,20 +13,25 @@ export const MIN_GAME_HEIGHT = 150;
 
 export interface GameProps extends ViewProps {
   game: IGame;
+  showTournament?: boolean;
 }
 export const Game: FunctionComponent<GameProps> = ({
   game: { team1, team2, score1, score2, time, tournament },
   style,
+  showTournament = true,
   ...props
 }) => {
   return (
     <View style={[styles.container, style]} {...props}>
       <View style={styles.header}>
-        <TextX style={styles.headerText}>
-          <Icon name="trophy" color={colors.gold} />
-          &nbsp;
-          {tournament.name}
-        </TextX>
+        {showTournament && (
+          <TextX style={styles.headerText}>
+            <Icon name="trophy" color={colors.gold} />
+            &nbsp;
+            {tournament.name}
+          </TextX>
+        )}
+        <View />
         <TextX style={styles.headerText}>
           {moment(Number(time)).fromNow()}
         </TextX>
