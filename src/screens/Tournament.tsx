@@ -34,31 +34,15 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
       { key: 'you', title: 'You', accessibilityLabel: 'You' },
     ],
   });
+  const [doRefresh, setDoRefresh] = useState(0);
   const timeStr = getTournamentTimeString({ startDate, endDate });
-
-  useEffect(() => {
-    setTimeout(() => {
-      Navigation.showModal({
-        stack: {
-          children: [
-            {
-              component: {
-                name: CREATE_GAME,
-                passProps: {
-                  tournament,
-                },
-              },
-            },
-          ],
-        },
-      });
-    }, 1000);
-  }, []);
 
   const renderScene = ({ route }: any) => {
     switch (route.key) {
       case 'standings':
-        return <TournamentStandings tournament={tournament} />;
+        return (
+          <TournamentStandings tournament={tournament} doRefresh={doRefresh} />
+        );
       case 'games':
         return <FirstRoute />;
       case 'you':
@@ -117,6 +101,9 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
                     name: CREATE_GAME,
                     passProps: {
                       tournament,
+                      onSuccess: () => {
+                        setDoRefresh(prev => prev + 1);
+                      },
                     },
                   },
                 },

@@ -46,7 +46,7 @@ const renderItem = (data: any[], { rowStyle = {}, textStyle = {} } = {}) => (
     <View style={[styles.standingCell]}>
       <TextX style={[textStyle]}>{data[3]}</TextX>
     </View>
-    <View style={[styles.standingCell, { flex: 1.2 }]}>
+    <View style={[styles.standingCell, { flex: 1.3 }]}>
       <TextX style={[textStyle]}>{data[4]}</TextX>
     </View>
   </View>
@@ -54,10 +54,11 @@ const renderItem = (data: any[], { rowStyle = {}, textStyle = {} } = {}) => (
 
 export interface TournamentStandingsProps extends ViewProps {
   tournament: ITournamentItem;
+  doRefresh: number;
 }
 export const TournamentStandings: FunctionComponent<
   TournamentStandingsProps
-> = ({ tournament: { id } }) => {
+> = ({ tournament: { id }, doRefresh = 0 }) => {
   const {
     data: { tournament: { minGames = 0, standings = [] } = {} } = {},
     loading,
@@ -75,6 +76,15 @@ export const TournamentStandings: FunctionComponent<
   useEffect(() => {
     setShowSpinner(loading);
   }, [loading]);
+
+  useEffect(() => {
+    if (doRefresh) {
+      setIsRefreshing(true);
+      refetch().finally(() => {
+        setIsRefreshing(false);
+      });
+    }
+  }, [doRefresh]);
 
   const [enoughGamesList, notEnoughGamesList] = getTournamentStandings(
     standings,

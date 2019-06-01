@@ -11,7 +11,6 @@ import { useNavBtnPress, useLoading } from '../hooks';
 import { useMutation, useQuery } from 'react-apollo-hooks';
 import { showBanner } from '../utils';
 import {
-  UserFragment,
   TournamentForGameFragment,
   ITournamentForGame,
   ITournamentItem,
@@ -24,9 +23,9 @@ Icon.getImageSource('times', TOP_BAR_ICON_SIZE, undefined).then(src => {
   closeIcon = src;
 });
 
-const CREATE_TOURNAMENT = gql`
-  mutation CreateGame($input: TournamentInput!) {
-    createTournament(input: $input) {
+const CREATE_GAME = gql`
+  mutation CreateGame($input: GameInput!) {
+    createGame(input: $input) {
       id
     }
   }
@@ -52,11 +51,11 @@ export const CreateGame: IScreenComponent<CreateGameProps> = ({
   tournament: { id: tournamentId },
 }) => {
   const { data: { tournament = {} } = {}, loading } = useQuery<{
-    tournament: ITournamentForGame;
+    tournament: ITournamentForGame | any;
   }>(GET_TOURNAMENT_INFO, {
     variables: { id: tournamentId },
   });
-  const createTournamentReq = useMutation(CREATE_TOURNAMENT);
+  const createGameReq = useMutation(CREATE_GAME);
   const [, setLoading, error, , disableButton] = useLoading(false);
   const [isLoadingTournament, setIsLoadingTournament] = useLoading(loading);
 
@@ -90,42 +89,28 @@ export const CreateGame: IScreenComponent<CreateGameProps> = ({
       tournament={tournament}
       saveBtnDisabled={disableButton}
       onSavePress={(form: any) => {
-        const {
-          name,
-          description,
-          startDate,
-          endDate,
-          privacy,
-          teamSize,
-          maxPlayers,
-          minGames,
-          inviteList,
-        } = form;
+        const { time, team1, team2, score1, score2 } = form;
 
-        setLoading(true);
-        createTournamentReq({
+        setLoading(true, undefined, { withLoadingOverlay: true });
+        createGameReq({
           variables: {
             input: {
-              name,
-              description,
-              startDate,
-              endDate,
-              privacy,
-              teamSize,
-              maxPlayers,
-              minGames,
-              inviteList,
+              tournament: tournamentId,
+              time,
+              team1,
+              team2,
+              score1: Number(score1),
+              score2: Number(score2),
             },
           },
         })
           .then(() => {
+            setLoading(false);
             !!onSuccess && onSuccess();
-            return Navigation.dismissModal(componentId)
-              .then(() => true)
-              .finally(() => {
-                showBanner({ type: 'success', message: 'Game created' });
-                return true;
-              });
+            return Navigation.dismissModal(componentId).finally(() => {
+              showBanner({ type: 'success', message: 'Game logged' });
+              return true;
+            });
           })
           .catch(err => {
             setLoading(false, err);
@@ -144,7 +129,7 @@ CreateGame.options = (): Options => ({
       translucent: false,
     },
     title: {
-      text: 'New Game',
+      text: 'Log Game',
     },
     leftButtons: [
       {
