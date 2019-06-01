@@ -93,6 +93,8 @@ export const Home: IScreenComponent<ScreenComponentProps> = () => {
           refetch({ cursor: initialCursor }).finally(() => {
             setIsRefreshing(false);
           });
+
+          shouldLoadMore.current = false;
         }}
         onScrollBeginDrag={() => {
           if (!shouldLoadMore.current && !loading && !isRefreshing) {
