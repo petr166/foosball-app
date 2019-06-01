@@ -15,3 +15,4 @@ export * from './TournamentList';
 export * from './TournamentItem';
 export * from './Tournament';
 export * from './CreateGameView';
+export * from './ErrorWithTryAgain';

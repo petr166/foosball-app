@@ -5,7 +5,12 @@ import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import moment from 'moment';
 
-import { TextX, ImageX, TournamentStandings } from '../components';
+import {
+  TextX,
+  ImageX,
+  TournamentStandings,
+  TournamentGames,
+} from '../components';
 import { IScreenComponent, ScreenComponentProps } from './index';
 import { colors } from '../config/styles';
 import { ITournamentItem } from '../fragments';
@@ -45,7 +50,9 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
           <TournamentStandings tournament={tournament} doRefresh={doRefresh} />
         );
       case 'games':
-        return <FirstRoute />;
+        return (
+          <TournamentGames tournament={tournament} doRefresh={doRefresh} />
+        );
       case 'you':
         return <FirstRoute />;
       default:
@@ -166,6 +173,12 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    ...getBoxShadowStyles(),
+    ...getBoxShadowStyles({
+      shadowOffset: {
+        width: 1,
+        height: 1,
+      },
+      shadowRadius: 4,
+    }),
   },
 });

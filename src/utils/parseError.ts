@@ -1,23 +1,24 @@
 import { ApolloError } from 'apollo-boost';
 
 export interface ExtendedError extends ApolloError {
-  text?: string;
+  text: string;
 }
 
-export const parseError = (error: ExtendedError) => {
+export const parseError = (error: ApolloError) => {
   const { networkError, graphQLErrors, message } = error;
+  const extendedError: ExtendedError = { ...error, text: '' };
 
   if (!!graphQLErrors && graphQLErrors.length) {
     const splitMsg = graphQLErrors[0].message.split(': ');
-    error.text = splitMsg[splitMsg.length - 1];
+    extendedError.text = splitMsg[splitMsg.length - 1];
   } else if (!!networkError) {
-    error.text = 'Network failure. Check your connectivity.';
+    extendedError.text = 'Network failure. Check your connectivity.';
   } else if (!!message) {
     const splitMsg = message.split(': ');
-    error.text = splitMsg[splitMsg.length - 1];
+    extendedError.text = splitMsg[splitMsg.length - 1];
   } else {
-    error.text = 'There was an error.';
+    extendedError.text = 'There was an error.';
   }
 
-  return error;
+  return extendedError;
 };

@@ -9,7 +9,9 @@ import { separateName, getBoxShadowStyles } from '../utils';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { colors } from '../config/styles';
 
-interface GameProps extends ViewProps {
+export const MIN_GAME_HEIGHT = 150;
+
+export interface GameProps extends ViewProps {
   game: IGame;
 }
 export const Game: FunctionComponent<GameProps> = ({
@@ -84,6 +86,7 @@ export const Team: FunctionComponent<TeamProps> = ({
 
 const styles = StyleSheet.create({
   container: {
+    minHeight: MIN_GAME_HEIGHT,
     marginHorizontal: 16,
     marginBottom: 20,
     borderWidth: 3,
@@ -110,9 +113,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scoreText: {
-    fontSize: 42,
+    fontSize: 40,
     fontWeight: '900',
     marginHorizontal: 12,
+    transform: [{ translateY: -10 }],
   },
   teamContainer: {
     justifyContent: 'center',
