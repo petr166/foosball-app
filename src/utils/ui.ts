@@ -46,7 +46,11 @@ export const showLoadingOverlay = () => {
 
 export const showBanner = async (props: ShowBannerProps) => {
   return Navigation.showOverlay({
-    component: { name: BANNER, passProps: props },
+    component: {
+      name: BANNER,
+      passProps: props,
+      options: { overlay: { interceptTouchOutside: false } },
+    },
   });
 };
 
