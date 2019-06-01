@@ -3,6 +3,7 @@ import { Options, Navigation } from 'react-native-navigation';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import moment from 'moment';
 
 import { TextX, ImageX, TournamentStandings } from '../components';
 import { IScreenComponent, ScreenComponentProps } from './index';
@@ -19,7 +20,7 @@ export interface TournamentProps extends ScreenComponentProps {
   tournament: ITournamentItem;
 }
 export const Tournament: IScreenComponent<TournamentProps> = ({
-  tournament: { name, cover, startDate, endDate },
+  tournament: { name, cover, startDate, endDate, teamSize, standings },
   tournament,
 }) => {
   const [tabState, setTabState] = useState({
@@ -51,6 +52,13 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
         return null;
     }
   };
+
+  const now = moment();
+  const showAddGameBtn =
+    !!standings &&
+    standings.length >= teamSize * 2 &&
+    moment(Number(endDate)).isAfter(now) &&
+    moment(Number(startDate)).isBefore(now);
 
   return (
     <View style={{ flex: 1 }}>
@@ -90,30 +98,32 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
         )}
       />
 
-      <TouchableOpacity
-        style={styles.addGameButton}
-        onPress={() => {
-          Navigation.showModal({
-            stack: {
-              children: [
-                {
-                  component: {
-                    name: CREATE_GAME,
-                    passProps: {
-                      tournament,
-                      onSuccess: () => {
-                        setDoRefresh(prev => prev + 1);
+      {showAddGameBtn && (
+        <TouchableOpacity
+          style={styles.addGameButton}
+          onPress={() => {
+            Navigation.showModal({
+              stack: {
+                children: [
+                  {
+                    component: {
+                      name: CREATE_GAME,
+                      passProps: {
+                        tournament,
+                        onSuccess: () => {
+                          setDoRefresh(prev => prev + 1);
+                        },
                       },
                     },
                   },
-                },
-              ],
-            },
-          });
-        }}
-      >
-        <Icon name="plus" size={30} color="#fff" />
-      </TouchableOpacity>
+                ],
+              },
+            });
+          }}
+        >
+          <Icon name="plus" size={30} color="#fff" />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

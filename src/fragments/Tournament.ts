@@ -12,6 +12,7 @@ export const TournamentItemFragment = gql`
     }
     startDate
     endDate
+    teamSize
   }
 `;
 
@@ -50,6 +51,7 @@ export interface ITournamentItem {
   standings: string[];
   startDate: string;
   endDate: string;
+  teamSize: number;
 }
 
 export interface IStanding {
