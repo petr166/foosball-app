@@ -10,6 +10,7 @@ import {
   ImageX,
   TournamentStandings,
   TournamentGames,
+  TournamentInfo,
 } from '../components';
 import { IScreenComponent, ScreenComponentProps } from './index';
 import { colors } from '../config/styles';
@@ -17,9 +18,6 @@ import { ITournamentItem } from '../fragments';
 import defaultCoverImg from '../assets/tournament-cover.jpg';
 import { getTournamentTimeString, getBoxShadowStyles } from '../utils';
 import { CREATE_GAME } from './screenNames';
-
-// TODO: remove
-const FirstRoute = () => <View style={[{ flex: 1 }]} />;
 
 export interface TournamentProps extends ScreenComponentProps {
   tournament: ITournamentItem;
@@ -37,7 +35,7 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
         accessibilityLabel: 'Standings',
       },
       { key: 'games', title: 'Games', accessibilityLabel: 'Games' },
-      { key: 'you', title: 'You', accessibilityLabel: 'You' },
+      { key: 'you', title: 'Info', accessibilityLabel: 'Info' },
     ],
   });
   const [doRefresh, setDoRefresh] = useState(0);
@@ -54,7 +52,15 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
           <TournamentGames tournament={tournament} doRefresh={doRefresh} />
         );
       case 'you':
-        return <FirstRoute />;
+        return (
+          <TournamentInfo
+            tournament={tournament}
+            doRefresh={doRefresh}
+            hasJoined={() => {
+              setDoRefresh(prev => prev + 1);
+            }}
+          />
+        );
       default:
         return null;
     }
