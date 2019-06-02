@@ -37,11 +37,12 @@ const GET_NOTIFICATIONS = gql`
 `;
 
 const initialCursor = 0;
-// TODO: get invitation height
 const firstToLoad =
   ~~(Dimensions.get('window').height / MIN_INVITATION_HEIGHT) + 2;
 
-export const Notifications: IScreenComponent<ScreenComponentProps> = () => {
+export const Notifications: IScreenComponent<ScreenComponentProps> = ({
+  componentId,
+}) => {
   const {
     data: {
       tournamentInvitations: {
@@ -134,6 +135,7 @@ export const Notifications: IScreenComponent<ScreenComponentProps> = () => {
         data={edges.map(v => v.node)}
         renderItem={({ item, index }) => (
           <TournamentInvitation
+            navigationId={componentId}
             tournamentInvitation={item}
             style={index === 0 ? { borderTopWidth: 1 } : {}}
           />

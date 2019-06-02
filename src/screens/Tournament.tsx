@@ -4,6 +4,7 @@ import { TabView, TabBar } from 'react-native-tab-view';
 import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import moment from 'moment';
+import { gql } from 'apollo-boost';
 
 import {
   TextX,
@@ -11,21 +12,52 @@ import {
   TournamentStandings,
   TournamentGames,
   TournamentInfo,
+  ErrorWithTryAgain,
 } from '../components';
 import { IScreenComponent, ScreenComponentProps } from './index';
 import { colors } from '../config/styles';
-import { ITournamentItem } from '../fragments';
+import { ITournamentItem, TournamentItemFragment } from '../fragments';
 import defaultCoverImg from '../assets/tournament-cover.jpg';
-import { getTournamentTimeString, getBoxShadowStyles } from '../utils';
+import {
+  getTournamentTimeString,
+  getBoxShadowStyles,
+  parseError,
+} from '../utils';
 import { CREATE_GAME } from './screenNames';
+import { useQuery } from 'react-apollo-hooks';
+import { useLoading } from '../hooks';
+
+const GET_TOURNAMENT = gql`
+  query GetTournament($id: ID!) {
+    tournament(id: $id) {
+      ...TournamentItemFragment
+    }
+  }
+
+  ${TournamentItemFragment}
+`;
 
 export interface TournamentProps extends ScreenComponentProps {
-  tournament: ITournamentItem;
+  tournament?: ITournamentItem;
+  tournamentId?: string;
 }
 export const Tournament: IScreenComponent<TournamentProps> = ({
-  tournament: { name, cover, startDate, endDate, teamSize, standings },
-  tournament,
+  tournament: tournamentFromProps,
+  tournamentId,
 }) => {
+  const {
+    data: { tournament } = {
+      tournament: tournamentFromProps,
+    },
+    loading,
+    error,
+    refetch,
+  } = useQuery<{
+    tournament: ITournamentItem;
+  }>(GET_TOURNAMENT, {
+    variables: { id: tournamentId },
+    skip: !tournamentId,
+  });
   const [tabState, setTabState] = useState({
     index: 0,
     routes: [
@@ -39,6 +71,15 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
     ],
   });
   const [doRefresh, setDoRefresh] = useState(0);
+  const [, setFetching] = useLoading(false);
+
+  useEffect(() => {
+    setFetching(loading, undefined, { withLoadingOverlay: true });
+  }, [loading]);
+
+  if (!tournament) return <View />;
+  const { name, cover, startDate, endDate, teamSize, standings } = tournament;
+
   const timeStr = getTournamentTimeString({ startDate, endDate });
 
   const renderScene = ({ route }: any) => {
@@ -75,67 +116,80 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={styles.headerContainer}>
-        <View style={styles.coverContainer}>
-          <ImageX
-            source={cover ? { uri: cover } : defaultCoverImg}
-            style={[styles.img]}
-            resizeMode="cover"
-            isDefaultImg={!cover}
-            defaultImageProps={{
-              source: defaultCoverImg,
-              resizeMode: 'cover',
-              style: [styles.img],
-            }}
-          />
-        </View>
-        <View style={styles.nameContainer}>
-          <TextX style={styles.text}>{name}</TextX>
-          <TextX style={styles.text}>{timeStr}</TextX>
-        </View>
-      </View>
+      {loading ? (
+        <React.Fragment />
+      ) : error ? (
+        <ErrorWithTryAgain
+          errorText={parseError(error).text}
+          onTryAgain={() => {
+            refetch();
+          }}
+        />
+      ) : (
+        <React.Fragment>
+          <View style={styles.headerContainer}>
+            <View style={styles.coverContainer}>
+              <ImageX
+                source={cover ? { uri: cover } : defaultCoverImg}
+                style={[styles.img]}
+                resizeMode="cover"
+                isDefaultImg={!cover}
+                defaultImageProps={{
+                  source: defaultCoverImg,
+                  resizeMode: 'cover',
+                  style: [styles.img],
+                }}
+              />
+            </View>
+            <View style={styles.nameContainer}>
+              <TextX style={styles.text}>{name}</TextX>
+              <TextX style={styles.text}>{timeStr}</TextX>
+            </View>
+          </View>
 
-      <TabView
-        lazy
-        navigationState={tabState}
-        renderScene={renderScene}
-        onIndexChange={index => setTabState(prev => ({ ...prev, index }))}
-        initialLayout={{ width: Dimensions.get('window').width }}
-        renderTabBar={props => (
-          <TabBar
-            {...props}
-            indicatorStyle={{ backgroundColor: colors.secondary }}
-            style={{ backgroundColor: '#fff' }}
-            labelStyle={{ color: '#000' }}
+          <TabView
+            lazy
+            navigationState={tabState}
+            renderScene={renderScene}
+            onIndexChange={index => setTabState(prev => ({ ...prev, index }))}
+            initialLayout={{ width: Dimensions.get('window').width }}
+            renderTabBar={props => (
+              <TabBar
+                {...props}
+                indicatorStyle={{ backgroundColor: colors.secondary }}
+                style={{ backgroundColor: '#fff' }}
+                labelStyle={{ color: '#000' }}
+              />
+            )}
           />
-        )}
-      />
 
-      {showAddGameBtn && (
-        <TouchableOpacity
-          style={styles.addGameButton}
-          onPress={() => {
-            Navigation.showModal({
-              stack: {
-                children: [
-                  {
-                    component: {
-                      name: CREATE_GAME,
-                      passProps: {
-                        tournament,
-                        onSuccess: () => {
-                          setDoRefresh(prev => prev + 1);
+          {showAddGameBtn && (
+            <TouchableOpacity
+              style={styles.addGameButton}
+              onPress={() => {
+                Navigation.showModal({
+                  stack: {
+                    children: [
+                      {
+                        component: {
+                          name: CREATE_GAME,
+                          passProps: {
+                            tournament,
+                            onSuccess: () => {
+                              setDoRefresh(prev => prev + 1);
+                            },
+                          },
                         },
                       },
-                    },
+                    ],
                   },
-                ],
-              },
-            });
-          }}
-        >
-          <Icon name="plus" size={30} color="#fff" />
-        </TouchableOpacity>
+                });
+              }}
+            >
+              <Icon name="plus" size={30} color="#fff" />
+            </TouchableOpacity>
+          )}
+        </React.Fragment>
       )}
     </View>
   );

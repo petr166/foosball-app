@@ -22,6 +22,7 @@ import { ErrorWithTryAgain } from '../ErrorWithTryAgain';
 const GET_TOURNAMENT_GAMES = gql`
   query GetTournamentGames($id: ID!, $first: Int!, $cursor: Int!) {
     tournament(id: $id) {
+      id
       games(first: $first, cursor: $cursor) {
         edges {
           node {
@@ -71,6 +72,12 @@ export const TournamentGames: FunctionComponent<TournamentGamesProps> = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const shouldLoadMore = useRef(false);
 
+  if (error) {
+    console.log('====================================');
+    console.log(error);
+    console.log('====================================');
+  }
+
   useEffect(() => {
     setShowSpinner(loading);
   }, [loading]);
@@ -110,7 +117,7 @@ export const TournamentGames: FunctionComponent<TournamentGamesProps> = ({
           )
         }
         ListEmptyComponent={
-          !loading ? (
+          !loading && !error ? (
             <View style={{ marginBottom: 14, paddingTop: 200 }}>
               <TextX
                 style={{ color: colors.helper, textAlign: 'center' }}

@@ -33,10 +33,9 @@ export const TournamentInvitation: FunctionComponent<
   return (
     <TouchableOpacity
       onPress={() => {
-        // TODO: redo Tournament.tsx to load tournament
-        // Navigation.push(navigationId, {
-        //   component: { name: TOURNAMENT, passProps: { tournamentId: id } },
-        // });
+        Navigation.push(navigationId, {
+          component: { name: TOURNAMENT, passProps: { tournamentId: id } },
+        });
       }}
     >
       <View style={[styles.container, style]} {...props}>

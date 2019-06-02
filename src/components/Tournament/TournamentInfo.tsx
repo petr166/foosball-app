@@ -20,6 +20,7 @@ import { ButtonX } from '../ButtonX';
 const GET_TOURNAMENT_INFO = gql`
   query GetTournamentInfo($id: ID!) {
     tournament(id: $id) {
+      id
       description
       canJoin
     }

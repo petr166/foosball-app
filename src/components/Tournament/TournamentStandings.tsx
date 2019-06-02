@@ -19,6 +19,7 @@ import { ListLoadingFooter } from '../ListLoadingFooter';
 const GET_TOURNAMENT_STANDINGS = gql`
   query GetTournamentStandings($id: ID!) {
     tournament(id: $id) {
+      id
       minGames
       standings {
         ...StandingFragment
