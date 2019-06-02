@@ -1,6 +1,6 @@
 import { setGlobal, addCallback } from 'reactn';
 import AsyncStorage from '@react-native-community/async-storage';
-import { merge } from 'lodash';
+import { merge, cloneDeep } from 'lodash';
 
 import { STORAGE_KEY } from './config/constants';
 
@@ -35,7 +35,7 @@ export const initGlobal = async (): Promise<IGlobalState> =>
     const stateFromStorage = await AsyncStorage.getItem(STORAGE_KEY);
     const persistedState = stateFromStorage ? JSON.parse(stateFromStorage) : {};
 
-    const state = { ...initialState };
+    const state = cloneDeep(initialState);
     merge(state, persistedState);
     console.log('STATE:', state);
 
