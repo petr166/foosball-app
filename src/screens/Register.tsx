@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, SafeAreaView } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { gql } from 'apollo-boost';
 import { useMutation } from 'react-apollo-hooks';
@@ -10,6 +10,7 @@ import { useLoading } from '../hooks';
 import { login } from '../login';
 import { UserFragment } from '../fragments';
 import { IGlobalState, ROOT } from '../global';
+import { colors } from '../config/styles';
 
 const REGISTER = gql`
   mutation Register($input: RegisterInput!) {
@@ -27,10 +28,10 @@ const REGISTER = gql`
 export const Register: FunctionComponent = () => {
   const [, setRoot] = useGlobal<IGlobalState>('root');
   const [isLoading, setLoading, errorText, , btnDisabled] = useLoading(false);
-  const [email, setEmail] = useState('my@mail.com');
-  const [name, setName] = useState('mirel');
-  const [password, setPassword] = useState('12345678');
-  const [repeatPassword, setRepeatPass] = useState('12345678');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [repeatPassword, setRepeatPass] = useState('');
   const register = useMutation(REGISTER);
 
   return (
@@ -38,10 +39,11 @@ export const Register: FunctionComponent = () => {
       contentContainerStyle={{
         flex: 1,
       }}
+      keyboardDismissMode="on-drag"
     >
-      <ScreenContainer style={styles.container}>
-        <TextX>foosball</TextX>
-        <TextX>register</TextX>
+      <ScreenContainer contentContainerStyle={styles.container}>
+        <SafeAreaView />
+        <TextX style={{ marginBottom: 42, fontSize: 30 }}>Register</TextX>
 
         <InputX
           placeholder="your@mail.com"
@@ -67,7 +69,7 @@ export const Register: FunctionComponent = () => {
         />
 
         <ButtonX
-          title="Sign Up"
+          title="Register"
           isLoading={isLoading}
           disabled={btnDisabled}
           onPress={() => {
@@ -91,9 +93,10 @@ export const Register: FunctionComponent = () => {
           }}
         />
 
-        <TextX>or</TextX>
+        <TextX style={{ marginVertical: 12 }}>or</TextX>
 
         <ButtonX
+          style={{ backgroundColor: colors.secondary }}
           title="Go to login"
           onPress={() => {
             setRoot(ROOT.LOGIN);
@@ -109,5 +112,8 @@ export const Register: FunctionComponent = () => {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
   },
 });

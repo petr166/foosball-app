@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, SafeAreaView } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { gql } from 'apollo-boost';
 import { useMutation } from 'react-apollo-hooks';
@@ -10,6 +10,7 @@ import { useLoading } from '../hooks';
 import { login } from '../login';
 import { UserFragment } from '../fragments';
 import { IGlobalState, ROOT } from '../global';
+import { colors } from '../config/styles';
 
 const LOGIN = gql`
   mutation Login($input: LoginInput!) {
@@ -36,10 +37,11 @@ export const Login: FunctionComponent = () => {
       contentContainerStyle={{
         flex: 1,
       }}
+      keyboardDismissMode="on-drag"
     >
-      <ScreenContainer style={styles.container}>
-        <TextX>foosball</TextX>
-        <TextX>login</TextX>
+      <ScreenContainer contentContainerStyle={styles.container}>
+        <SafeAreaView />
+        <TextX style={{ marginBottom: 42, fontSize: 30 }}>Login</TextX>
 
         <InputX
           placeholder="your@mail.com"
@@ -76,9 +78,10 @@ export const Login: FunctionComponent = () => {
           }}
         />
 
-        <TextX>or</TextX>
+        <TextX style={{ marginVertical: 12 }}>or</TextX>
 
         <ButtonX
+          style={{ backgroundColor: colors.secondary }}
           title="Go to register"
           onPress={() => {
             setRoot(ROOT.REGISTER);
@@ -94,5 +97,8 @@ export const Login: FunctionComponent = () => {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
   },
 });

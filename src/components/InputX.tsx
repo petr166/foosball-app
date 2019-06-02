@@ -16,7 +16,9 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#000',
+    borderRadius: 6,
     width: '100%',
     padding: 10,
+    marginBottom: 12,
   },
 });
