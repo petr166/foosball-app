@@ -69,6 +69,7 @@ export const TournamentStandings: FunctionComponent<
     GET_TOURNAMENT_STANDINGS,
     {
       variables: { id },
+      notifyOnNetworkStatusChange: true,
     }
   );
   const [showSpinner, setShowSpinner] = useLoading(false);

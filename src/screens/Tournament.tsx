@@ -56,6 +56,7 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
     tournament: ITournamentItem;
   }>(GET_TOURNAMENT, {
     variables: { id: tournamentId },
+    notifyOnNetworkStatusChange: true,
     skip: !tournamentId,
   });
   const [tabState, setTabState] = useState({

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useGlobal } from 'reactn';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { Options } from 'react-native-navigation';
+import { Options, Navigation } from 'react-native-navigation';
 import { gql } from 'apollo-boost';
 import { useQuery } from 'react-apollo-hooks';
 
@@ -13,6 +13,7 @@ import { useNavBtnPress } from '../hooks';
 import { TOP_BAR_ICON_SIZE } from '../config/styles';
 import { UserProfileFragment, GameFragment } from '../fragments';
 import { mergeWith, isArray } from 'lodash';
+import { SETTINGS } from './screenNames';
 
 const SETTINGS_ID = 'MyProfile.settings';
 const initialCursor = 0;
@@ -45,7 +46,9 @@ const GET_USER = gql`
 `;
 
 export interface MyProfileProps extends ScreenComponentProps {}
-export const MyProfile: IScreenComponent<MyProfileProps> = () => {
+export const MyProfile: IScreenComponent<MyProfileProps> = ({
+  componentId,
+}) => {
   const [currentUser, setCurrentUser] = useGlobal<IGlobalState>('currentUser');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { data, error, loading, fetchMore, refetch } = useQuery(GET_USER, {
@@ -55,9 +58,7 @@ export const MyProfile: IScreenComponent<MyProfileProps> = () => {
   const shouldLoadMore = useRef(false);
 
   useNavBtnPress(() => {
-    console.log('====================================');
-    console.log('pressed settings');
-    console.log('====================================');
+    Navigation.push(componentId, { component: { name: SETTINGS } });
   }, SETTINGS_ID);
 
   useEffect(() => {

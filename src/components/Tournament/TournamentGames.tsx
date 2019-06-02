@@ -66,17 +66,12 @@ export const TournamentGames: FunctionComponent<TournamentGamesProps> = ({
     GET_TOURNAMENT_GAMES,
     {
       variables: { id, first: firstToLoad, cursor: initialCursor },
+      notifyOnNetworkStatusChange: true,
     }
   );
   const [showSpinner, setShowSpinner] = useLoading(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const shouldLoadMore = useRef(false);
-
-  if (error) {
-    console.log('====================================');
-    console.log(error);
-    console.log('====================================');
-  }
 
   useEffect(() => {
     setShowSpinner(loading);

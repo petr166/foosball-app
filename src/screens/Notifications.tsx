@@ -58,6 +58,7 @@ export const Notifications: IScreenComponent<ScreenComponentProps> = ({
     tournamentInvitations: PaginatedDocument<ITournamentInvitation>;
   }>(GET_NOTIFICATIONS, {
     variables: { cursor: initialCursor, first: firstToLoad },
+    notifyOnNetworkStatusChange: true,
   });
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showSpinner, setShowSpinner] = useLoading(false);

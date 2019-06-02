@@ -54,6 +54,7 @@ export const TournamentInfo: FunctionComponent<TournamentInfoProps> = ({
     GET_TOURNAMENT_INFO,
     {
       variables: { id },
+      notifyOnNetworkStatusChange: true,
     }
   );
   const joinTournamentReq = useMutation(JOIN_TOURNAMENT, {

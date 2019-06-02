@@ -22,7 +22,7 @@ export const defaultNavOptions: Options = {
   bottomTabs: {
     animate: true,
     titleDisplayMode: 'alwaysShow',
-    currentTabIndex: 2, // TODO: dev remove
+    currentTabIndex: 3, // TODO: dev remove
   },
   bottomTab: {
     selectedIconColor: colors.primary,

@@ -45,6 +45,7 @@ export const Home: IScreenComponent<ScreenComponentProps> = () => {
     feedGames: PaginatedDocument<IGame>;
   }>(GET_FEED_GAMES, {
     variables: { cursor: initialCursor, first: firstToLoad },
+    notifyOnNetworkStatusChange: true,
   });
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showSpinner, setShowSpinner] = useLoading(false);

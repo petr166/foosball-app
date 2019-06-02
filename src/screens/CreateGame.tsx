@@ -54,6 +54,7 @@ export const CreateGame: IScreenComponent<CreateGameProps> = ({
     tournament: ITournamentForGame | any;
   }>(GET_TOURNAMENT_INFO, {
     variables: { id: tournamentId },
+    notifyOnNetworkStatusChange: true,
   });
   const createGameReq = useMutation(CREATE_GAME);
   const [, setLoading, error, , disableButton] = useLoading(false);
