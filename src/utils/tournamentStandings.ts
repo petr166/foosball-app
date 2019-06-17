@@ -9,8 +9,8 @@ export const getTournamentStandings = (
   minGames: number
 ): Array<ExtendedIStanding[]> => {
   standings.sort((a, b) => {
-    if (a.played === b.played) return 0;
-    return a.played < b.played ? -1 : 1;
+    if (a.points === b.points) return 0;
+    return a.points > b.points ? -1 : 1;
   });
 
   return [
