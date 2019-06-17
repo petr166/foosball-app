@@ -3,6 +3,7 @@ import Icon, { FA5Style } from 'react-native-vector-icons/FontAwesome5';
 import { addCallback } from 'reactn';
 import { UIManager } from 'react-native';
 import Promise from 'bluebird';
+import SplashScreen from 'react-native-splash-screen';
 
 import {
   registerAppScreens,
@@ -173,6 +174,7 @@ const initApp = async () => {
 
   startApp(root);
   addCallback(handleRootChange);
+  SplashScreen.hide();
 };
 
 initApp();
