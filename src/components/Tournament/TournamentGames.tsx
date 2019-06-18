@@ -11,7 +11,12 @@ import { useQuery } from 'react-apollo-hooks';
 
 import { TextX } from '../TextX';
 import { ITournamentItem, GameFragment, IGame } from '../../fragments';
-import { listKeyExtractor, parseError, mergeWithConcat } from '../../utils';
+import {
+  listKeyExtractor,
+  parseError,
+  mergeWithConcat,
+  goToUserProfile,
+} from '../../utils';
 import { colors } from '../../config/styles';
 import { useLoading } from '../../hooks';
 import { ListLoadingFooter } from '../ListLoadingFooter';
@@ -47,10 +52,12 @@ const firstToLoad =
 export interface TournamentGamesProps extends ViewProps {
   tournament: ITournamentItem;
   doRefresh: number;
+  componentId: string;
 }
 export const TournamentGames: FunctionComponent<TournamentGamesProps> = ({
   tournament: { id },
   doRefresh = 0,
+  componentId,
 }) => {
   const {
     data: {
@@ -148,7 +155,13 @@ export const TournamentGames: FunctionComponent<TournamentGamesProps> = ({
         }}
         keyExtractor={listKeyExtractor}
         data={edges.map(v => v.node)}
-        renderItem={({ item }) => <Game game={item} showTournament={false} />}
+        renderItem={({ item }) => (
+          <Game
+            game={item}
+            showTournament={false}
+            onUserPress={userId => goToUserProfile(componentId, userId)}
+          />
+        )}
       />
     </View>
   );

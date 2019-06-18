@@ -44,6 +44,7 @@ export interface TournamentProps extends ScreenComponentProps {
 export const Tournament: IScreenComponent<TournamentProps> = ({
   tournament: tournamentFromProps,
   tournamentId,
+  componentId,
 }) => {
   const {
     data: { tournament } = {
@@ -87,11 +88,19 @@ export const Tournament: IScreenComponent<TournamentProps> = ({
     switch (route.key) {
       case 'standings':
         return (
-          <TournamentStandings tournament={tournament} doRefresh={doRefresh} />
+          <TournamentStandings
+            tournament={tournament}
+            doRefresh={doRefresh}
+            componentId={componentId}
+          />
         );
       case 'games':
         return (
-          <TournamentGames tournament={tournament} doRefresh={doRefresh} />
+          <TournamentGames
+            tournament={tournament}
+            doRefresh={doRefresh}
+            componentId={componentId}
+          />
         );
       case 'you':
         return (

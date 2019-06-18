@@ -9,6 +9,7 @@ import {
   getTournamentStandings,
   listKeyExtractor,
   parseError,
+  goToUserProfile,
 } from '../../utils';
 import { colors } from '../../config/styles';
 import { Avatar } from '../Avatar';
@@ -30,23 +31,37 @@ const GET_TOURNAMENT_STANDINGS = gql`
   ${StandingFragment}
 `;
 
-const renderItem = (data: any[], { rowStyle = {}, textStyle = {} } = {}) => (
+const renderItem = (
+  data: any[],
+  { rowStyle = {}, textStyle = {}, onUserPress = () => {} } = {}
+) => (
   <View style={[styles.standingRow, rowStyle]}>
     <View style={[styles.standingCell, styles.positionCell]}>
       <TextX style={[textStyle]}>{data[0]}</TextX>
     </View>
+
     <View style={[styles.standingCell, styles.nameCell]}>
       {data[1].avatar !== undefined && (
-        <Avatar style={{ marginRight: 5 }} size={20} avatar={data[1].avatar} />
+        <Avatar
+          style={{ marginRight: 5 }}
+          size={20}
+          avatar={data[1].avatar}
+          onPress={onUserPress}
+        />
       )}
-      <TextX style={[textStyle]}>{data[1].name}</TextX>
+      <TextX onPress={onUserPress} style={[textStyle]}>
+        {data[1].name}
+      </TextX>
     </View>
+
     <View style={[styles.standingCell]}>
       <TextX style={[textStyle]}>{data[2]}</TextX>
     </View>
+
     <View style={[styles.standingCell]}>
       <TextX style={[textStyle]}>{data[3]}</TextX>
     </View>
+
     <View style={[styles.standingCell, { flex: 1.3 }]}>
       <TextX style={[textStyle]}>{data[4]}</TextX>
     </View>
@@ -56,10 +71,11 @@ const renderItem = (data: any[], { rowStyle = {}, textStyle = {} } = {}) => (
 export interface TournamentStandingsProps extends ViewProps {
   tournament: ITournamentItem;
   doRefresh: number;
+  componentId: string; // for nav
 }
 export const TournamentStandings: FunctionComponent<
   TournamentStandingsProps
-> = ({ tournament: { id }, doRefresh = 0 }) => {
+> = ({ tournament: { id }, doRefresh = 0, componentId }) => {
   const {
     data: { tournament: { minGames = 0, standings = [] } = {} } = {},
     loading,
@@ -150,6 +166,9 @@ export const TournamentStandings: FunctionComponent<
                         color: '#fff',
                       }
                     : {},
+                onUserPress: () => {
+                  goToUserProfile(componentId, item.user.id);
+                },
               }
             )
           }
