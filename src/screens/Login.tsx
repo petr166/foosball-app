@@ -70,7 +70,7 @@ export const Login: FunctionComponent = () => {
               },
             })
               .then(({ data: { login: { token, user } } }) => {
-                login({ token, user });
+                return login({ token, user });
               })
               .catch(err => {
                 setLoading(false, err);
