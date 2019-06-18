@@ -225,7 +225,11 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  headerContainer: { height: 170, justifyContent: 'flex-end' },
+  headerContainer: {
+    height: 170,
+    justifyContent: 'flex-end',
+    overflow: 'hidden',
+  },
   coverContainer: { position: 'absolute', height: '100%', width: '100%' },
   nameContainer: {
     padding: 16,
