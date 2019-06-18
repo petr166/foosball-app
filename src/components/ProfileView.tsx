@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { Avatar } from './Avatar';
 import { TextX } from './TextX';
-import { getNavBarHeight } from '../utils';
+import { getNavBarHeight, goToUserProfile } from '../utils';
 import { colors } from '../config/styles';
 import { PaginatedDocument } from '../interfaces';
 import { Game } from './Game';
@@ -34,6 +34,7 @@ export interface ProfileViewProps extends ViewProps {
   onRefresh?: () => void;
   isLoading?: boolean;
   isRefreshing?: boolean;
+  componentId: string; // for navigation
 }
 export const ProfileView: FunctionComponent<ProfileViewProps> = ({
   user: {
@@ -48,6 +49,7 @@ export const ProfileView: FunctionComponent<ProfileViewProps> = ({
   onRefresh,
   isLoading,
   isRefreshing,
+  componentId,
 }) => {
   let circleSize =
     (Dimensions.get('window').width - SCREEN_MARGIN * 3) / 2 - 18;
@@ -156,7 +158,12 @@ export const ProfileView: FunctionComponent<ProfileViewProps> = ({
         )
       }
       data={gameList.map(v => v.node)}
-      renderItem={({ item }) => <Game game={item} />}
+      renderItem={({ item }) => (
+        <Game
+          game={item}
+          onUserPress={userId => goToUserProfile(componentId, userId)}
+        />
+      )}
       keyExtractor={item => item.id}
       onScrollBeginDrag={onScrollBeginDrag}
       onEndReached={onEndReached}

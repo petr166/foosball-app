@@ -5,15 +5,20 @@ import { Options, Navigation } from 'react-native-navigation';
 import { gql } from 'apollo-boost';
 import { useQuery } from 'react-apollo-hooks';
 
-import { ProfileView } from '../components';
+import {
+  ProfileView,
+  ListLoadingFooter,
+  ErrorWithTryAgain,
+} from '../components';
 import { IScreenComponent, ScreenComponentProps } from './index';
 import { IGlobalState } from '../global';
 import { ImageURISource } from 'react-native';
-import { useNavBtnPress } from '../hooks';
+import { useNavBtnPress, useLoading } from '../hooks';
 import { TOP_BAR_ICON_SIZE } from '../config/styles';
 import { UserProfileFragment, GameFragment } from '../fragments';
 import { mergeWith, isArray } from 'lodash';
 import { SETTINGS } from './screenNames';
+import { showBanner, parseError } from '../utils';
 
 const SETTINGS_ID = 'MyProfile.settings';
 const initialCursor = 0;
@@ -49,6 +54,7 @@ export interface MyProfileProps extends ScreenComponentProps {}
 export const MyProfile: IScreenComponent<MyProfileProps> = ({
   componentId,
 }) => {
+  const [showSpinner, setShowSpinner] = useLoading(false);
   const [currentUser, setCurrentUser] = useGlobal<IGlobalState>('currentUser');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { data, error, loading, fetchMore, refetch } = useQuery(GET_USER, {
@@ -65,6 +71,10 @@ export const MyProfile: IScreenComponent<MyProfileProps> = ({
     updateUser(data);
   }, [data]);
 
+  useEffect(() => {
+    setShowSpinner(loading);
+  }, [loading]);
+
   const updateUser = (data: any) => {
     const { user } = data;
     if (user) {
@@ -72,15 +82,23 @@ export const MyProfile: IScreenComponent<MyProfileProps> = ({
     }
   };
 
-  // TODO: useQueryWithLoading
-  if (error) {
-    console.log('====================================');
-    console.log(error);
-    console.log('====================================');
-  }
+  if (error)
+    return (
+      <ErrorWithTryAgain
+        errorText={parseError(error).text}
+        onTryAgain={() => {
+          refetch({ id: currentUser.id, cursor: initialCursor }).then(
+            updateUser
+          );
+        }}
+      />
+    );
+  if (showSpinner) return <ListLoadingFooter style={{ minHeight: 400 }} />;
+  if (!currentUser) return null;
 
   return (
     <ProfileView
+      componentId={componentId}
       user={currentUser}
       isCurrentUser
       onScrollBeginDrag={() => {
@@ -110,6 +128,8 @@ export const MyProfile: IScreenComponent<MyProfileProps> = ({
               updateUser(newData);
               return newData;
             },
+          }).catch(err => {
+            showBanner({ type: 'error', message: parseError(err).text });
           });
 
           if (shouldLoadMore.current) shouldLoadMore.current = false;

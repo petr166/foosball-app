@@ -39,6 +39,7 @@ export const Avatar: FunctionComponent<AvatarProps> = ({
     <TouchableOpacity
       style={[styles.button, getRoundStyles(size), { borderWidth }, style]}
       disabled={!onPress}
+      onPress={onPress}
       {...props}
     >
       <ImageX

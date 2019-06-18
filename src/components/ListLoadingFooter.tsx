@@ -15,7 +15,7 @@ export const ListLoadingFooter: FunctionComponent<ListLoadingFooterProps> = ({
 const styles = StyleSheet.create({
   loadingContainer: {
     minWidth: 160,
-    minHeight: 160,
+    minHeight: 200,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',

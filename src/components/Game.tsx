@@ -14,11 +14,13 @@ export const MIN_GAME_HEIGHT = 150;
 export interface GameProps extends ViewProps {
   game: IGame;
   showTournament?: boolean;
+  onUserPress?: (userId: string) => void;
 }
 export const Game: FunctionComponent<GameProps> = ({
   game: { team1, team2, score1, score2, time, tournament },
   style,
   showTournament = true,
+  onUserPress,
   ...props
 }) => {
   return (
@@ -38,11 +40,11 @@ export const Game: FunctionComponent<GameProps> = ({
       </View>
 
       <View style={styles.content}>
-        <Team team={team1} />
+        <Team onUserPress={onUserPress} team={team1} />
         <TextX style={styles.scoreText}>
           {score1} - {score2}
         </TextX>
-        <Team team={team2} />
+        <Team onUserPress={onUserPress} team={team2} />
       </View>
     </View>
   );
@@ -50,10 +52,12 @@ export const Game: FunctionComponent<GameProps> = ({
 
 interface TeamProps extends ViewProps {
   team: IUser[];
+  onUserPress?: (userId: string) => void;
 }
 export const Team: FunctionComponent<TeamProps> = ({
   team,
   style,
+  onUserPress,
   ...props
 }) => {
   const avatarSize = team[1] ? 58 : 64;
@@ -68,22 +72,36 @@ export const Team: FunctionComponent<TeamProps> = ({
         }}
       >
         <Avatar
+          onPress={onUserPress ? () => onUserPress(team[0].id) : undefined}
           style={{ zIndex: 1, elevation: 1 }}
           avatar={team[0].avatar}
           size={avatarSize}
         />
+
         {team[1] && (
           <Avatar
             style={{ marginLeft: -22 }}
             avatar={team[1].avatar}
             size={avatarSize}
+            onPress={onUserPress ? () => onUserPress(team[1].id) : undefined}
           />
         )}
       </View>
 
       <TextX adjustsFontSizeToFit numberOfLines={1} style={styles.name}>
-        {separateName(team[0].name).firstName}
-        {team[1] && ' & ' + separateName(team[1].name).firstName}
+        <TextX onPress={() => onUserPress && onUserPress(team[0].id)}>
+          {separateName(team[0].name).firstName}
+        </TextX>
+
+        {team[1] && (
+          <TextX>
+            {' '}
+            &{' '}
+            <TextX onPress={() => onUserPress && onUserPress(team[1].id)}>
+              {separateName(team[1].name).firstName}
+            </TextX>
+          </TextX>
+        )}
       </TextX>
     </View>
   );
