@@ -8,7 +8,12 @@ import { GameFragment, IGame } from '../fragments';
 import { useQuery } from 'react-apollo-hooks';
 import { MIN_GAME_HEIGHT, Game } from '../components/Game';
 import { PaginatedDocument } from '../interfaces';
-import { listKeyExtractor, parseError, mergeWithConcat } from '../utils';
+import {
+  listKeyExtractor,
+  parseError,
+  mergeWithConcat,
+  goToUserProfile,
+} from '../utils';
 import { useLoading } from '../hooks';
 
 const GET_FEED_GAMES = gql`
@@ -32,7 +37,9 @@ const initialCursor = 0;
 const firstToLoad =
   ~~(Dimensions.get('window').height / (MIN_GAME_HEIGHT + 20)) + 2;
 
-export const Home: IScreenComponent<ScreenComponentProps> = () => {
+export const Home: IScreenComponent<ScreenComponentProps> = ({
+  componentId,
+}) => {
   const {
     data: {
       feedGames: { edges = [], pageInfo: { hasNextPage = false } = {} } = {},
@@ -121,7 +128,12 @@ export const Home: IScreenComponent<ScreenComponentProps> = () => {
         }}
         keyExtractor={listKeyExtractor}
         data={edges.map(v => v.node)}
-        renderItem={({ item }) => <Game game={item} />}
+        renderItem={({ item }) => (
+          <Game
+            game={item}
+            onUserPress={userId => goToUserProfile(componentId, userId)}
+          />
+        )}
       />
     </View>
   );
