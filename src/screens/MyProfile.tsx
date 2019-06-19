@@ -62,6 +62,7 @@ export const MyProfile: IScreenComponent<MyProfileProps> = ({
     notifyOnNetworkStatusChange: true,
   });
   const shouldLoadMore = useRef(false);
+  const spinnerIterations = useRef(0);
 
   useNavBtnPress(() => {
     Navigation.push(componentId, { component: { name: SETTINGS } });
@@ -72,7 +73,10 @@ export const MyProfile: IScreenComponent<MyProfileProps> = ({
   }, [data]);
 
   useEffect(() => {
-    setShowSpinner(loading);
+    if (spinnerIterations.current < 2) {
+      setShowSpinner(loading);
+      spinnerIterations.current += 1;
+    }
   }, [loading]);
 
   const updateUser = (data: any) => {
