@@ -73,9 +73,11 @@ export const MyProfile: IScreenComponent<MyProfileProps> = ({
   }, [data]);
 
   useEffect(() => {
-    if (spinnerIterations.current < 2) {
+    if (spinnerIterations.current < 1) {
       setShowSpinner(loading);
-      spinnerIterations.current += 1;
+      if (!loading) {
+        spinnerIterations.current += 1;
+      }
     }
   }, [loading]);
 
