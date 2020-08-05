@@ -5,7 +5,7 @@
 # <img width="40" src="./preview/logo.png" alt="App Logo"/> Foosball App
 
 > React Native cross-platform app that makes it easy and engaging for people to keep track of office leisure competitions, specifically foosball  
-> The app gets data served through the [backend graphQL api](https://github.com/petr166/foosball-api), check out the repo for more on that
+> The app gets data served through the [backend graphQL api](https://github.com/petr166/foosball-api#readme), check out the repo for more on that
 
 ## Prerequisites
 
@@ -44,5 +44,5 @@
   - [RN Async Storage](https://github.com/react-native-community/async-storage) - persistent key-value storage system
 - [GraphQL](https://graphql.org) - api query language, for efficient app-server data exchange
   - [React Apollo](https://github.com/apollographql/react-apollo) - graphQL frontend consumer implementation built for React
-    > check out the [backend implementation](https://github.com/petr166/foosball-api)
+    > check out the [backend implementation](https://github.com/petr166/foosball-api#readme)
 - [Moment](https://momentjs.com) - helps with date/time parsing and display
