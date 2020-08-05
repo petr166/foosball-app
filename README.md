@@ -38,11 +38,18 @@
 > these are the main technologies and/or modules used, for all libraries check [package.json](package.json)
 
 - [React Native](https://reactnative.dev) - framework for building cross-platform apps using React
+
   - [Typescript](https://www.typescriptlang.org) - superset of Javascript, adding types and more
+
   - [RN Navigation](https://github.com/wix/react-native-navigation) - native platform navigation library
+
   - [RN SVG](https://github.com/react-native-community/react-native-svg) - provides support for SVG in react native
+
   - [RN Async Storage](https://github.com/react-native-community/async-storage) - persistent key-value storage system
+
 - [GraphQL](https://graphql.org) - api query language, for efficient app-server data exchange
+
   - [React Apollo](https://github.com/apollographql/react-apollo) - graphQL frontend consumer implementation built for React
     > check out the [backend implementation](https://github.com/petr166/foosball-api#readme)
+
 - [Moment](https://momentjs.com) - helps with date/time parsing and display
