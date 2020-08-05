@@ -11,13 +11,6 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.4.0",
-    "@types/bluebird": "^3.5.27",
-    "@types/bluebird-global": "^3.5.11",
-    "@types/lodash": "^4.14.126",
-    "@types/react-native-datepicker": "^1.7.0",
-    "@types/react-native-svg-charts": "^5.0.1",
-    "@types/react-native-vector-icons": "^6.4.0",
-    "@types/uuid": "^3.4.4",
     "apollo-boost": "^0.3.1",
     "bluebird": "^3.5.5",
     "graphql": "^14.3.0",
@@ -60,7 +53,14 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-eslint-rules": "^5.4.0",
     "tslint-react": "^4.0.0",
-    "typescript": "3.4.5"
+    "typescript": "3.4.5",
+    "@types/bluebird": "^3.5.27",
+    "@types/bluebird-global": "^3.5.11",
+    "@types/lodash": "^4.14.126",
+    "@types/react-native-datepicker": "^1.7.0",
+    "@types/react-native-svg-charts": "^5.0.1",
+    "@types/react-native-vector-icons": "^6.4.0",
+    "@types/uuid": "^3.4.4"
   },
   "jest": {
     "preset": "react-native"
