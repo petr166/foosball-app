@@ -27,7 +27,7 @@
     "react-native-img-cache": "^1.6.0",
     "react-native-keyboard-aware-scroll-view": "^0.8.0",
     "react-native-navigation": "^2.18.5",
-    "react-native-reanimated": "^1.0.1",
+    "react-native-reanimated": "^2.10.0",
     "react-native-splash-screen": "^3.2.0",
     "react-native-svg": "^9.4.0",
     "react-native-svg-charts": "^5.2.0",
